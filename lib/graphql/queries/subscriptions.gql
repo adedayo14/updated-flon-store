@@ -110,3 +110,9 @@ mutation cancelSubscription($id: String) {
     canceled
   }
 }
+
+mutation pauseSubscription($id: String) {
+  updateSubscription(id: $id, input: { paused: true, datePauseEnd: null }) {
+    paused
+  }
+}

@@ -85,6 +85,20 @@ const subscriptionDetailsText = (i18n: I18n) => ({
     ),
     errorMessage: i18n('account.subscriptions.details.cancel.error_message'),
   },
+  pause: {
+    message: i18n('account.subscriptions.details.pause.message'),
+    label: i18n('account.subscriptions.details.pause.label'),
+    dialogTitle: i18n('account.subscriptions.details.pause.dialog_title'),
+    dialogBody: i18n('account.subscriptions.details.pause.dialog_body'),
+    buttonLabel: i18n(
+      'account.subscriptions.details.pause.cancel_button_label',
+    ),
+    subscriptionButtonLabel: i18n(
+      'account.subscriptions.details.pause.cancel_subscription_button_label',
+    ),
+    successMessage: i18n('account.subscriptions.details.pause.success_message'),
+    errorMessage: i18n('account.subscriptions.details.pause.error_message'),
+  },
   trialEndMessage: i18n('account.subscriptions.details.trial_end_message'),
   headerBillingMessage: i18n(
     'account.subscriptions.details.header_billing_message',
@@ -326,6 +340,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
   const { locale } = useRouter();
   const [status, setStatus] = useState(subscription.status);
   const [cancelSubscriptionOpen, setCancelSubscriptionOpen] = useState(false);
+  const [pauseSubscriptionOpen, setPauseSubscriptionOpen] = useState(false);
   const send = useNotificationStore((store) => store.send);
   const fetchApi = useFetchApi();
 
@@ -346,21 +361,30 @@ const SubscriptionDetailPage: NextPageWithLayout<
   ]);
 
   const responseCallback = useCallback(
-    async (res: Response) => {
+    async (res: Response, action: 'cancel' | 'pause') => {
       const data = await res.json();
 
       setCancelSubscriptionOpen(false);
+      setPauseSubscriptionOpen(false);
 
-      if (res.status === 200 && !!data?.canceled) {
+      const isSuccess =
+        (action === 'cancel' && data?.canceled) ||
+        (action === 'pause' && data?.paused);
+
+      if (res.status === 200 && isSuccess) {
         send({
-          message: text.cancel.successMessage,
+          message: text[action].successMessage,
           type: NOTIFICATION_TYPE.INFO,
         });
 
-        setStatus(SUBSCRIPTION_STATUS.CANCELED);
+        setStatus(
+          action === 'cancel'
+            ? SUBSCRIPTION_STATUS.CANCELED
+            : SUBSCRIPTION_STATUS.PAUSED,
+        );
       } else {
         send({
-          message: text.cancel.errorMessage,
+          message: text[action].errorMessage,
           type: NOTIFICATION_TYPE.ERROR,
         });
       }
@@ -368,12 +392,15 @@ const SubscriptionDetailPage: NextPageWithLayout<
     [send, text],
   );
 
-  const errorCallback = useCallback(() => {
-    send({
-      message: text.cancel.errorMessage,
-      type: NOTIFICATION_TYPE.ERROR,
-    });
-  }, [send, text]);
+  const errorCallback = useCallback(
+    (action: 'cancel' | 'pause') => {
+      send({
+        message: text[action].errorMessage,
+        type: NOTIFICATION_TYPE.ERROR,
+      });
+    },
+    [send, text],
+  );
 
   const cancelSubscription = useCallback(
     () =>
@@ -385,8 +412,24 @@ const SubscriptionDetailPage: NextPageWithLayout<
             body: JSON.stringify({ id: subscription.id }),
           },
         },
-        responseCallback,
-        errorCallback,
+        (res) => responseCallback(res, 'cancel'),
+        () => errorCallback('cancel'),
+      ),
+    [responseCallback, errorCallback, fetchApi, subscription.id],
+  );
+
+  const pauseSubscription = useCallback(
+    () =>
+      fetchApi(
+        {
+          url: API_ROUTES.PAUSE_SUBSCRIPTION,
+          options: {
+            method: 'POST',
+            body: JSON.stringify({ id: subscription.id }),
+          },
+        },
+        (res) => responseCallback(res, 'pause'),
+        () => errorCallback('pause'),
       ),
     [responseCallback, errorCallback, fetchApi, subscription.id],
   );
@@ -466,6 +509,37 @@ const SubscriptionDetailPage: NextPageWithLayout<
               {
                 label: text.cancel.buttonLabel,
                 onClick: () => setCancelSubscriptionOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+            ]}
+          />
+        </div>
+      )}
+      {status !== SUBSCRIPTION_STATUS.PAUSED && (
+        <div className="mt-10 flex flex-col space-y-6">
+          <p className="text-md text-body">{text.pause.message}</p>
+          <Button
+            elType={BUTTON_TYPE.BUTTON}
+            small
+            className="w-full md:w-fit"
+            onClick={() => setPauseSubscriptionOpen(true)}
+            buttonStyle={BUTTON_STYLE.SECONDARY}>
+            {text.pause.label}
+          </Button>
+          <ActionModal
+            title={text.pause.dialogTitle}
+            body={text.pause.dialogBody}
+            open={pauseSubscriptionOpen}
+            onClose={() => setPauseSubscriptionOpen(false)}
+            actionButtons={[
+              {
+                label: text.pause.subscriptionButtonLabel,
+                onClick: pauseSubscription,
+                style: BUTTON_STYLE.DANGER,
+              },
+              {
+                label: text.pause.buttonLabel,
+                onClick: () => setPauseSubscriptionOpen(false),
                 style: BUTTON_STYLE.SECONDARY,
               },
             ]}

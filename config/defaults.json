@@ -188,6 +188,16 @@
             "cancel_subscription_button_label": "Cancel subscription",
             "success_message": "Your subscription is canceled",
             "error_message": "Something went wrong, please try again later"
+          },
+          "pause": {
+            "message": "You can pause your subscription at anytime.",
+            "label": "Pause subscription",
+            "dialog_title": "Pause subscription",
+            "dialog_body": "Pausing your subscription is permanent. Are you sure you want to proceed?",
+            "cancel_button_label": "Cancel",
+            "cancel_subscription_button_label": "Pause subscription",
+            "success_message": "Your subscription is paused",
+            "error_message": "Something went wrong, please try again later"
           }
         },
         "next_billing": "Next billing",

@@ -8,4 +8,5 @@ export enum API_ROUTES {
   CART_ITEMS = '/horizon-api/cart/items',
   PREVIEW = '/horizon-api/preview',
   CANCEL_SUBSCRIPTION = '/horizon-api/cancel-subscription',
+  PAUSE_SUBSCRIPTION = '/horizon-api/pause-subscription',
 }

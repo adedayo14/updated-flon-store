@@ -44,6 +44,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
   const [searchName, setSearchName] = useState('');
   const [products, setProducts] = useState(firstProducts);
   const [isRecurring, setIsRecurring] = useState(false);
+  const [showRecurringCheckbox] = useState(false);
 
   const send = useNotificationStore((store) => store.send);
   const fetchApi = useFetchApi();
@@ -299,33 +300,35 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                     {formatPriceByCurrency(currency)(total)}
                   </span>
                 </div>
-                <div className="flex items-center mt-4">
-                  <input
-                    type="checkbox"
-                    id="recurring"
-                    checked={isRecurring}
-                    onChange={() => setIsRecurring(!isRecurring)}
-                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                  />
-                  <label
-                    htmlFor="recurring"
-                    className="ml-2 block text-sm text-gray-900">
-                    Recurring
-                  </label>
-                </div>
+                {showRecurringCheckbox && (
+                  <div className="flex items-center mt-4">
+                    <input
+                      type="checkbox"
+                      id="recurring"
+                      checked={isRecurring}
+                      onChange={() => setIsRecurring(!isRecurring)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label
+                      htmlFor="recurring"
+                      className="ml-2 block text-sm text-gray-900">
+                      Recurring
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
           )}
           <div className="mt-8 flex space-x-2">
-            {actionButtons.map(({ label, style }, i) => (
+            {actionButtons.map(({ label, style, onClick }, i) => (
               <Button
                 key={`${label}${i}`}
                 elType={BUTTON_TYPE.BUTTON}
                 buttonStyle={style}
                 onClick={() =>
-                  subscription
+                  subscription && i == 1
                     ? addItem(subscription, selectedItem?.id ?? '', quantity)
-                    : null
+                    : onClick()
                 }
                 className="text-center"
                 fullWidth

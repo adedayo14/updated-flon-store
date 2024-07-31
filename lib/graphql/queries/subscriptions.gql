@@ -1,6 +1,7 @@
 query getSubscriptionById($id: String!) {
   subscriptionById(id: $id) {
     id
+    planId
     status
     dateCreated
     datePeriodEnd
@@ -8,6 +9,23 @@ query getSubscriptionById($id: String!) {
     quantity
     trial
     dateTrialEnd
+    items {
+     product {
+        id
+        name
+        images {
+           caption
+        file {
+          width
+          height
+          url
+        }
+        }
+      }
+      priceTotal
+      quantity
+      id
+    }
     product {
       name
       slug
@@ -111,8 +129,35 @@ mutation cancelSubscription($id: String) {
   }
 }
 
-mutation pauseSubscription($id: String) {
-  updateSubscription(id: $id, input: { paused: true, datePauseEnd: null }) {
+mutation pauseSubscription($id: String, $status: Boolean) {
+  updateSubscription(id: $id, input: { paused: $status }) {
     paused
+  }
+}
+
+mutation deleteSubscriptionItem($id: String, $itemId: String) {
+  deleteSubscriptionItem(subscriptionId: $id, itemId: $itemId) {
+    product {
+      name
+      id
+      price
+    }
+    quantity
+    priceTotal
+  }
+}
+
+mutation addSubscriptionItem($id: String, $itemId: ID, $quantity: Int) {
+  addSubscriptionItem(
+    subscriptionId: $id
+    input: { productId: $itemId, quantity: $quantity }
+  ) {
+    product {
+      name
+      id
+      price
+    }
+    quantity
+    priceTotal
   }
 }

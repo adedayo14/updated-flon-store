@@ -532,3 +532,18 @@ query getFilteredSortedProducts(
     }
   }
 }
+
+query addInvoiceItemFirstProducts {
+  products(limit: 10, page: 1) {
+    results {
+      id
+      name
+      price
+      images {
+       file {
+        url
+      }
+      }
+    }
+  }
+}

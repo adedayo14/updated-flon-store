@@ -9,4 +9,7 @@ export enum API_ROUTES {
   PREVIEW = '/horizon-api/preview',
   CANCEL_SUBSCRIPTION = '/horizon-api/cancel-subscription',
   PAUSE_SUBSCRIPTION = '/horizon-api/pause-subscription',
+  DELETE_INVOICE_ITEM = '/horizon-api/delete-invoice-item',
+  ADD_INVOICE_ITEM = '/horizon-api/add-invoice-item',
+  SEARCH_PRODUCTS = '/horizon-api/search-products',
 }

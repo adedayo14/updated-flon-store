@@ -9,9 +9,9 @@ export default async function handler(
     return res.status(405).end('Method Not Allowed');
   }
 
-  const { id, status } = req.body;
-  console.log(`id: ${id}, status: ${status}`);
-  if (!id) {
+  const { id, itemId } = req.body;
+
+  if (!id || !itemId) {
     return res.status(400).end('Bad Request');
   }
 
@@ -19,19 +19,17 @@ export default async function handler(
     const client = getClientWithSessionToken(req.cookies);
 
     const {
-      data: { updateSubscription },
-    } = await client.pauseSubscription({
+      data: { deleteSubscriptionItem },
+    } = await client.deleteSubscriptionItem({
       id,
-      status: status,
+      itemId,
     });
 
-    if (!updateSubscription) {
+    if (deleteSubscriptionItem == null) {
       return res.status(500).end('Internal Server Error');
     }
 
-    return res
-      .status(200)
-      .send(JSON.stringify({ paused: updateSubscription.paused }));
+    return res.status(200).send(JSON.stringify({ deleted: true }));
   } catch (error) {
     return res.status(500).end('Internal Server Error');
   }

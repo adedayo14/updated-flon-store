@@ -6,9 +6,13 @@ import {
 import { getAccountLayout } from 'lib/utils/layout_getters';
 import type { GetServerSideProps } from 'next';
 import type { NextPageWithLayout, PageProps } from 'types/shared/pages';
-import type { SwellSubscription } from 'lib/graphql/generated/sdk';
+import type {
+  SwellSubscription,
+  SwellSubscriptionItem,
+} from 'lib/graphql/generated/sdk';
 import OrderHeader from 'components/molecules/OrderHeader';
 import OrderItemsTable from 'components/molecules/OrderItemsTable';
+import InvoiceItemsTable from 'components/molecules/InvoiceItemsTable';
 import OrderSummary from 'components/molecules/OrderSummary';
 import OrderInfo from 'components/molecules/OrderInfo';
 import { CARD_BRAND, PAYMENT_METHOD } from 'types/shared/payment';
@@ -18,6 +22,7 @@ import ArrowLeft from 'assets/icons/arrow-left.svg';
 import { SUBSCRIPTION_STATUS } from 'types/subscription';
 import Button from 'components/atoms/Button';
 import ActionModal from 'components/molecules/ActionModal';
+import AddInvoiceItemModal from 'components/molecules/AddInvoiceItemModal';
 import BannerInfo from 'components/atoms/BannerInfo';
 import { TEXT_ALIGNMENT } from 'types/shared/alignment';
 import {
@@ -41,6 +46,7 @@ import useI18n, { I18n } from 'hooks/useI18n';
 
 interface SubscriptionDetailPageProps extends PageProps {
   subscription: SwellSubscription;
+  firstProducts: Array<any>;
 }
 
 const subscriptionDetailsText = (i18n: I18n) => ({
@@ -99,6 +105,22 @@ const subscriptionDetailsText = (i18n: I18n) => ({
     successMessage: i18n('account.subscriptions.details.pause.success_message'),
     errorMessage: i18n('account.subscriptions.details.pause.error_message'),
   },
+  resume: {
+    message: i18n('account.subscriptions.details.resume.message'),
+    label: i18n('account.subscriptions.details.resume.label'),
+    dialogTitle: i18n('account.subscriptions.details.resume.dialog_title'),
+    dialogBody: i18n('account.subscriptions.details.resume.dialog_body'),
+    buttonLabel: i18n(
+      'account.subscriptions.details.resume.cancel_button_label',
+    ),
+    subscriptionButtonLabel: i18n(
+      'account.subscriptions.details.resume.cancel_subscription_button_label',
+    ),
+    successMessage: i18n(
+      'account.subscriptions.details.resume.success_message',
+    ),
+    errorMessage: i18n('account.subscriptions.details.resume.error_message'),
+  },
   trialEndMessage: i18n('account.subscriptions.details.trial_end_message'),
   headerBillingMessage: i18n(
     'account.subscriptions.details.header_billing_message',
@@ -125,7 +147,7 @@ const formatSubscription = (
   subscription: SwellSubscription,
   text: ReturnType<typeof subscriptionDetailsText>,
 ) => ({
-  id: subscription.id,
+  id: subscription?.id,
   // Header
   name: subscription?.product?.name ?? '',
   status: subscription?.status as SUBSCRIPTION_STATUS,
@@ -287,6 +309,8 @@ const formatSubscription = (
         ]
       : []),
   ],
+  invoiceItems: subscription.items,
+  currency: subscription?.currency,
 });
 
 export const propsCallback: GetServerSideProps<
@@ -317,10 +341,20 @@ export const propsCallback: GetServerSideProps<
     };
   }
 
+  const firstProducts = (await client.addInvoiceItemFirstProducts())?.data
+    ?.products?.results;
+
+  if (!firstProducts) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       pageType: 'subscriptions',
       subscription,
+      firstProducts,
       ...(locale ? { locale } : {}),
     },
   };
@@ -336,11 +370,13 @@ const SubscriptionDetailPage: NextPageWithLayout<
   const i18n = useI18n();
   const text = subscriptionDetailsText(i18n);
   const subscription = formatSubscription(props.subscription, text);
+  const firstProducts = props.firstProducts;
 
   const { locale } = useRouter();
   const [status, setStatus] = useState(subscription.status);
   const [cancelSubscriptionOpen, setCancelSubscriptionOpen] = useState(false);
   const [pauseSubscriptionOpen, setPauseSubscriptionOpen] = useState(false);
+  const [addInvoiceOpen, setAddInvoiceOpen] = useState(false);
   const send = useNotificationStore((store) => store.send);
   const fetchApi = useFetchApi();
 
@@ -361,7 +397,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
   ]);
 
   const responseCallback = useCallback(
-    async (res: Response, action: 'cancel' | 'pause') => {
+    async (res: Response, action: 'cancel' | 'pause' | 'resume') => {
       const data = await res.json();
 
       setCancelSubscriptionOpen(false);
@@ -369,7 +405,8 @@ const SubscriptionDetailPage: NextPageWithLayout<
 
       const isSuccess =
         (action === 'cancel' && data?.canceled) ||
-        (action === 'pause' && data?.paused);
+        (action === 'pause' && data?.paused) ||
+        (action === 'resume' && !data?.paused);
 
       if (res.status === 200 && isSuccess) {
         send({
@@ -380,7 +417,9 @@ const SubscriptionDetailPage: NextPageWithLayout<
         setStatus(
           action === 'cancel'
             ? SUBSCRIPTION_STATUS.CANCELED
-            : SUBSCRIPTION_STATUS.PAUSED,
+            : action === 'pause'
+            ? SUBSCRIPTION_STATUS.PAUSED
+            : SUBSCRIPTION_STATUS.ACTIVE,
         );
       } else {
         send({
@@ -393,7 +432,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
   );
 
   const errorCallback = useCallback(
-    (action: 'cancel' | 'pause') => {
+    (action: 'cancel' | 'pause' | 'resume') => {
       send({
         message: text[action].errorMessage,
         type: NOTIFICATION_TYPE.ERROR,
@@ -419,17 +458,17 @@ const SubscriptionDetailPage: NextPageWithLayout<
   );
 
   const pauseSubscription = useCallback(
-    () =>
+    (status: boolean) =>
       fetchApi(
         {
           url: API_ROUTES.PAUSE_SUBSCRIPTION,
           options: {
             method: 'POST',
-            body: JSON.stringify({ id: subscription.id }),
+            body: JSON.stringify({ id: subscription.id, status }),
           },
         },
-        (res) => responseCallback(res, 'pause'),
-        () => errorCallback('pause'),
+        (res) => responseCallback(res, !status ? 'resume' : 'pause'),
+        () => errorCallback(!status ? 'resume' : 'pause'),
       ),
     [responseCallback, errorCallback, fetchApi, subscription.id],
   );
@@ -464,6 +503,18 @@ const SubscriptionDetailPage: NextPageWithLayout<
         itemsText={text.itemsLabel}
         className="mt-8"
       />
+      {subscription.id && subscription.invoiceItems && (
+        <InvoiceItemsTable
+          subscription={subscription.id}
+          invoiceItems={subscription.invoiceItems.filter(
+            (item): item is SwellSubscriptionItem => item !== null,
+          )}
+          quantityText={text.quantityLabel}
+          priceText={text.priceLabel}
+          itemsText="Invoice items"
+          className="mt-8"
+        />
+      )}
       <OrderSummary
         rows={subscription.summaryRows}
         totalRow={subscription.totalRow}
@@ -534,7 +585,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
             actionButtons={[
               {
                 label: text.pause.subscriptionButtonLabel,
-                onClick: pauseSubscription,
+                onClick: () => pauseSubscription(true),
                 style: BUTTON_STYLE.DANGER,
               },
               {
@@ -546,6 +597,69 @@ const SubscriptionDetailPage: NextPageWithLayout<
           />
         </div>
       )}
+      {status == SUBSCRIPTION_STATUS.PAUSED && (
+        <div className="mt-10 flex flex-col space-y-6">
+          <p className="text-md text-body">{text.resume.message}</p>
+          <Button
+            elType={BUTTON_TYPE.BUTTON}
+            small
+            className="w-full md:w-fit"
+            onClick={() => setPauseSubscriptionOpen(true)}
+            buttonStyle={BUTTON_STYLE.SECONDARY}>
+            {text.resume.label}
+          </Button>
+          <ActionModal
+            title={text.resume.dialogTitle}
+            body={text.resume.dialogBody}
+            open={pauseSubscriptionOpen}
+            onClose={() => setPauseSubscriptionOpen(false)}
+            actionButtons={[
+              {
+                label: text.resume.subscriptionButtonLabel,
+                onClick: () => pauseSubscription(false),
+                style: BUTTON_STYLE.DANGER,
+              },
+              {
+                label: text.resume.buttonLabel,
+                onClick: () => setPauseSubscriptionOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+            ]}
+          />
+        </div>
+      )}
+      <div className="mt-10 flex flex-col space-y-6">
+        <Button
+          elType={BUTTON_TYPE.BUTTON}
+          small
+          className="w-full md:w-fit"
+          onClick={() => setAddInvoiceOpen(true)}
+          buttonStyle={BUTTON_STYLE.SECONDARY}>
+          Add Invoice
+        </Button>
+        {subscription.id && subscription.currency && (
+          <AddInvoiceItemModal
+            subscription={subscription.id}
+            currency={subscription.currency}
+            firstProducts={firstProducts}
+            title="Add item"
+            open={addInvoiceOpen}
+            onClose={() => setAddInvoiceOpen(false)}
+            actionButtons={[
+              {
+                label: 'Cancel',
+                onClick: () => setAddInvoiceOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+              {
+                label: 'Save',
+                onClick: cancelSubscription,
+                style: BUTTON_STYLE.PRIMARY,
+              },
+            ]}
+          />
+        )}
+      </div>
     </article>
   );
 };

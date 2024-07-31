@@ -198,6 +198,16 @@
             "cancel_subscription_button_label": "Pause subscription",
             "success_message": "Your subscription is paused",
             "error_message": "Something went wrong, please try again later"
+          },
+            "resume": {
+            "message": "You can resume your subscription at anytime.",
+            "label": "Resume subscription",
+            "dialog_title": "Resume subscription",
+            "dialog_body": "Resuming your subscription is permanent. Are you sure you want to proceed?",
+            "cancel_button_label": "Cancel",
+            "cancel_subscription_button_label": "Resume subscription",
+            "success_message": "Your subscription is resumed",
+            "error_message": "Something went wrong, please try again later"
           }
         },
         "next_billing": "Next billing",

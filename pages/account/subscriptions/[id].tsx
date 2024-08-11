@@ -373,6 +373,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
   const firstProducts = props.firstProducts;
 
   const { locale } = useRouter();
+  const [showInvoiceBtn] = useState(false);
   const [status, setStatus] = useState(subscription.status);
   const [cancelSubscriptionOpen, setCancelSubscriptionOpen] = useState(false);
   const [pauseSubscriptionOpen, setPauseSubscriptionOpen] = useState(false);
@@ -535,129 +536,130 @@ const SubscriptionDetailPage: NextPageWithLayout<
         infoCards={subscription.billingInfo}
         className="border-b-outline mt-10 border-b pb-10"
       />
-      {status !== SUBSCRIPTION_STATUS.CANCELED && (
-        <div className="mt-10 flex flex-col space-y-6">
-          <p className="text-md text-body">{text.cancel.message}</p>
-          <Button
-            elType={BUTTON_TYPE.BUTTON}
-            small
-            className="w-full md:w-fit"
-            onClick={() => setCancelSubscriptionOpen(true)}
-            buttonStyle={BUTTON_STYLE.SECONDARY}>
-            {text.cancel.label}
-          </Button>
-          <ActionModal
-            title={text.cancel.dialogTitle}
-            body={text.cancel.dialogBody}
-            open={cancelSubscriptionOpen}
-            onClose={() => setCancelSubscriptionOpen(false)}
-            actionButtons={[
-              {
-                label: text.cancel.subscriptionButtonLabel,
-                onClick: cancelSubscription,
-                style: BUTTON_STYLE.DANGER,
-              },
-              {
-                label: text.cancel.buttonLabel,
-                onClick: () => setCancelSubscriptionOpen(false),
-                style: BUTTON_STYLE.SECONDARY,
-              },
-            ]}
-          />
-        </div>
-      )}
-      {status !== SUBSCRIPTION_STATUS.PAUSED && (
-        <div className="mt-10 flex flex-col space-y-6">
-          <p className="text-md text-body">{text.pause.message}</p>
-          <Button
-            elType={BUTTON_TYPE.BUTTON}
-            small
-            className="w-full md:w-fit"
-            onClick={() => setPauseSubscriptionOpen(true)}
-            buttonStyle={BUTTON_STYLE.SECONDARY}>
-            {text.pause.label}
-          </Button>
-          <ActionModal
-            title={text.pause.dialogTitle}
-            body={text.pause.dialogBody}
-            open={pauseSubscriptionOpen}
-            onClose={() => setPauseSubscriptionOpen(false)}
-            actionButtons={[
-              {
-                label: text.pause.subscriptionButtonLabel,
-                onClick: () => pauseSubscription(true),
-                style: BUTTON_STYLE.DANGER,
-              },
-              {
-                label: text.pause.buttonLabel,
-                onClick: () => setPauseSubscriptionOpen(false),
-                style: BUTTON_STYLE.SECONDARY,
-              },
-            ]}
-          />
-        </div>
-      )}
-      {status == SUBSCRIPTION_STATUS.PAUSED && (
-        <div className="mt-10 flex flex-col space-y-6">
-          <p className="text-md text-body">{text.resume.message}</p>
-          <Button
-            elType={BUTTON_TYPE.BUTTON}
-            small
-            className="w-full md:w-fit"
-            onClick={() => setPauseSubscriptionOpen(true)}
-            buttonStyle={BUTTON_STYLE.SECONDARY}>
-            {text.resume.label}
-          </Button>
-          <ActionModal
-            title={text.resume.dialogTitle}
-            body={text.resume.dialogBody}
-            open={pauseSubscriptionOpen}
-            onClose={() => setPauseSubscriptionOpen(false)}
-            actionButtons={[
-              {
-                label: text.resume.subscriptionButtonLabel,
-                onClick: () => pauseSubscription(false),
-                style: BUTTON_STYLE.DANGER,
-              },
-              {
-                label: text.resume.buttonLabel,
-                onClick: () => setPauseSubscriptionOpen(false),
-                style: BUTTON_STYLE.SECONDARY,
-              },
-            ]}
-          />
-        </div>
-      )}
-      <div className="mt-10 flex flex-col space-y-6">
-        <Button
-          elType={BUTTON_TYPE.BUTTON}
-          small
-          className="w-full md:w-fit"
-          onClick={() => setAddInvoiceOpen(true)}
-          buttonStyle={BUTTON_STYLE.SECONDARY}>
-          Add Invoice
-        </Button>
-        {subscription.id && subscription.currency && (
-          <AddInvoiceItemModal
-            subscription={subscription.id}
-            currency={subscription.currency}
-            firstProducts={firstProducts}
-            title="Add item"
-            open={addInvoiceOpen}
-            onClose={() => setAddInvoiceOpen(false)}
-            actionButtons={[
-              {
-                label: 'Cancel',
-                onClick: () => setAddInvoiceOpen(false),
-                style: BUTTON_STYLE.SECONDARY,
-              },
-              {
-                label: 'Save',
-                onClick: cancelSubscription,
-                style: BUTTON_STYLE.PRIMARY,
-              },
-            ]}
-          />
+      <div className="flex gap-x-2">
+        {status !== SUBSCRIPTION_STATUS.CANCELED && (
+          <div className="mt-10 flex flex-col space-y-6">
+            <Button
+              elType={BUTTON_TYPE.BUTTON}
+              small
+              className="w-full md:w-fit"
+              onClick={() => setCancelSubscriptionOpen(true)}
+              buttonStyle={BUTTON_STYLE.SECONDARY}>
+              Cancel
+            </Button>
+            <ActionModal
+              title={text.cancel.dialogTitle}
+              body={text.cancel.dialogBody}
+              open={cancelSubscriptionOpen}
+              onClose={() => setCancelSubscriptionOpen(false)}
+              actionButtons={[
+                {
+                  label: text.cancel.subscriptionButtonLabel,
+                  onClick: cancelSubscription,
+                  style: BUTTON_STYLE.DANGER,
+                },
+                {
+                  label: text.cancel.buttonLabel,
+                  onClick: () => setCancelSubscriptionOpen(false),
+                  style: BUTTON_STYLE.SECONDARY,
+                },
+              ]}
+            />
+          </div>
+        )}
+        {status !== SUBSCRIPTION_STATUS.PAUSED && (
+          <div className="mt-10 flex flex-col space-y-6">
+            <Button
+              elType={BUTTON_TYPE.BUTTON}
+              small
+              className="w-full md:w-fit"
+              onClick={() => setPauseSubscriptionOpen(true)}
+              buttonStyle={BUTTON_STYLE.SECONDARY}>
+              Pause
+            </Button>
+            <ActionModal
+              title={text.pause.dialogTitle}
+              body={text.pause.dialogBody}
+              open={pauseSubscriptionOpen}
+              onClose={() => setPauseSubscriptionOpen(false)}
+              actionButtons={[
+                {
+                  label: text.pause.subscriptionButtonLabel,
+                  onClick: () => pauseSubscription(true),
+                  style: BUTTON_STYLE.DANGER,
+                },
+                {
+                  label: text.pause.buttonLabel,
+                  onClick: () => setPauseSubscriptionOpen(false),
+                  style: BUTTON_STYLE.SECONDARY,
+                },
+              ]}
+            />
+          </div>
+        )}
+        {status == SUBSCRIPTION_STATUS.PAUSED && (
+          <div className="mt-10 flex flex-col space-y-6">
+            <Button
+              elType={BUTTON_TYPE.BUTTON}
+              small
+              className="w-full md:w-fit"
+              onClick={() => setPauseSubscriptionOpen(true)}
+              buttonStyle={BUTTON_STYLE.SECONDARY}>
+              Resume
+            </Button>
+            <ActionModal
+              title={text.resume.dialogTitle}
+              body={text.resume.dialogBody}
+              open={pauseSubscriptionOpen}
+              onClose={() => setPauseSubscriptionOpen(false)}
+              actionButtons={[
+                {
+                  label: text.resume.subscriptionButtonLabel,
+                  onClick: () => pauseSubscription(false),
+                  style: BUTTON_STYLE.DANGER,
+                },
+                {
+                  label: text.resume.buttonLabel,
+                  onClick: () => setPauseSubscriptionOpen(false),
+                  style: BUTTON_STYLE.SECONDARY,
+                },
+              ]}
+            />
+          </div>
+        )}
+        {showInvoiceBtn && (
+          <div className="mt-10 flex flex-col space-y-6">
+            <Button
+              elType={BUTTON_TYPE.BUTTON}
+              small
+              className="w-full md:w-fit"
+              onClick={() => setAddInvoiceOpen(true)}
+              buttonStyle={BUTTON_STYLE.SECONDARY}>
+              Add Invoice
+            </Button>
+            {subscription.id && subscription.currency && (
+              <AddInvoiceItemModal
+                subscription={subscription.id}
+                currency={subscription.currency}
+                firstProducts={firstProducts}
+                title="Add item"
+                open={addInvoiceOpen}
+                onClose={() => setAddInvoiceOpen(false)}
+                actionButtons={[
+                  {
+                    label: 'Cancel',
+                    onClick: () => setAddInvoiceOpen(false),
+                    style: BUTTON_STYLE.SECONDARY,
+                  },
+                  {
+                    label: 'Save',
+                    onClick: cancelSubscription,
+                    style: BUTTON_STYLE.PRIMARY,
+                  },
+                ]}
+              />
+            )}
+          </div>
         )}
       </div>
     </article>

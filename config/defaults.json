@@ -181,11 +181,11 @@
           "shipment_plural_label": "shipments",
           "cancel": {
             "message": "You can cancel your subscription at anytime.",
-            "label": "Cancel subscription",
+            "label": "Cancel",
             "dialog_title": "Cancel subscription",
             "dialog_body": "Cancelling your subscription is permanent. Are you sure you want to proceed?",
             "cancel_button_label": "Cancel",
-            "cancel_subscription_button_label": "Cancel subscription",
+            "cancel_subscription_button_label": "Cancel",
             "success_message": "Your subscription is canceled",
             "error_message": "Something went wrong, please try again later"
           },
@@ -201,11 +201,11 @@
           },
             "resume": {
             "message": "You can resume your subscription at anytime.",
-            "label": "Resume subscription",
+            "label": "Resume",
             "dialog_title": "Resume subscription",
             "dialog_body": "Resuming your subscription is permanent. Are you sure you want to proceed?",
             "cancel_button_label": "Cancel",
-            "cancel_subscription_button_label": "Resume subscription",
+            "cancel_subscription_button_label": "Resume",
             "success_message": "Your subscription is resumed",
             "error_message": "Something went wrong, please try again later"
           }

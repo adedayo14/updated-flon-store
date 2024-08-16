@@ -517,6 +517,15 @@ query searchProducts($searchTerm: String, $currency: String) {
           url
         }
       }
+      variants {
+         results {
+          name
+          id
+        }
+      }
+    options {
+      name
+    }
     }
   }
 }
@@ -544,6 +553,15 @@ query addInvoiceItemFirstProducts {
         url
       }
       }
+       variants {
+         results {
+          name
+          id
+        }
+      }
+    options {
+      name
+    }
     }
   }
 }

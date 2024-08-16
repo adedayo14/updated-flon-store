@@ -199,7 +199,7 @@
             "success_message": "Your subscription is paused",
             "error_message": "Something went wrong, please try again later"
           },
-            "resume": {
+          "resume": {
             "message": "You can resume your subscription at anytime.",
             "label": "Resume",
             "dialog_title": "Resume subscription",
@@ -207,6 +207,16 @@
             "cancel_button_label": "Cancel",
             "cancel_subscription_button_label": "Resume",
             "success_message": "Your subscription is resumed",
+            "error_message": "Something went wrong, please try again later"
+          },
+          "edit": {
+            "message": "You can edit your subscription at anytime.",
+            "label": "Edit plan",
+            "dialog_title": "Edit subscription",
+            "dialog_body": "Editing your subscription is permanent. Are you sure you want to proceed?",
+            "cancel_button_label": "Cancel",
+            "cancel_subscription_button_label": "Edit",
+            "success_message": "Your subscription is edited",
             "error_message": "Something went wrong, please try again later"
           }
         },

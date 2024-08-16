@@ -12,4 +12,5 @@ export enum API_ROUTES {
   DELETE_INVOICE_ITEM = '/horizon-api/delete-invoice-item',
   ADD_INVOICE_ITEM = '/horizon-api/add-invoice-item',
   SEARCH_PRODUCTS = '/horizon-api/search-products',
+  EDIT_SUBSCRIPTION_PLAN = '/horizon-api/edit-subscription-plan',
 }

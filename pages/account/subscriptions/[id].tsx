@@ -23,6 +23,7 @@ import { SUBSCRIPTION_STATUS } from 'types/subscription';
 import Button from 'components/atoms/Button';
 import ActionModal from 'components/molecules/ActionModal';
 import AddInvoiceItemModal from 'components/molecules/AddInvoiceItemModal';
+import EditPlanModal from 'components/molecules/EditPlanModal';
 import BannerInfo from 'components/atoms/BannerInfo';
 import { TEXT_ALIGNMENT } from 'types/shared/alignment';
 import {
@@ -119,6 +120,18 @@ const subscriptionDetailsText = (i18n: I18n) => ({
     successMessage: i18n(
       'account.subscriptions.details.resume.success_message',
     ),
+    errorMessage: i18n('account.subscriptions.details.resume.error_message'),
+  },
+  edit: {
+    message: i18n('account.subscriptions.details.edit.message'),
+    label: i18n('account.subscriptions.details.edit.label'),
+    dialogTitle: i18n('account.subscriptions.details.edit.dialog_title'),
+    dialogBody: i18n('account.subscriptions.details.edit.dialog_body'),
+    buttonLabel: i18n('account.subscriptions.details.edit.cancel_button_label'),
+    subscriptionButtonLabel: i18n(
+      'account.subscriptions.details.edit.cancel_subscription_button_label',
+    ),
+    successMessage: i18n('account.subscriptions.details.edit.success_message'),
     errorMessage: i18n('account.subscriptions.details.resume.error_message'),
   },
   trialEndMessage: i18n('account.subscriptions.details.trial_end_message'),
@@ -371,12 +384,14 @@ const SubscriptionDetailPage: NextPageWithLayout<
   const text = subscriptionDetailsText(i18n);
   const subscription = formatSubscription(props.subscription, text);
   const firstProducts = props.firstProducts;
+  const initialSubscription = props.subscription;
 
   const { locale } = useRouter();
   const [showInvoiceBtn] = useState(false);
   const [status, setStatus] = useState(subscription.status);
   const [cancelSubscriptionOpen, setCancelSubscriptionOpen] = useState(false);
   const [pauseSubscriptionOpen, setPauseSubscriptionOpen] = useState(false);
+  const [editSubscriptionOpen, setEditSubscriptionOpen] = useState(false);
   const [addInvoiceOpen, setAddInvoiceOpen] = useState(false);
   const send = useNotificationStore((store) => store.send);
   const fetchApi = useFetchApi();
@@ -661,6 +676,37 @@ const SubscriptionDetailPage: NextPageWithLayout<
             )}
           </div>
         )}
+
+        <div className="mt-10 flex flex-col space-y-6">
+          <Button
+            elType={BUTTON_TYPE.BUTTON}
+            small
+            className="w-full md:w-fit"
+            onClick={() => setEditSubscriptionOpen(true)}
+            buttonStyle={BUTTON_STYLE.SECONDARY}>
+            {text.edit.label}
+          </Button>
+          <EditPlanModal
+            subscription={initialSubscription}
+            currency={subscription.currency ?? ''}
+            firstProducts={firstProducts}
+            title="Edit plan"
+            open={editSubscriptionOpen}
+            onClose={() => setEditSubscriptionOpen(false)}
+            actionButtons={[
+              {
+                label: 'Cancel',
+                onClick: () => setEditSubscriptionOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+              {
+                label: 'Save',
+                onClick: cancelSubscription,
+                style: BUTTON_STYLE.PRIMARY,
+              },
+            ]}
+          />
+        </div>
       </div>
     </article>
   );

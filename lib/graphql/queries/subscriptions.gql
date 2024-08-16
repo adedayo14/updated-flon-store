@@ -6,6 +6,7 @@ query getSubscriptionById($id: String!) {
     dateCreated
     datePeriodEnd
     dateOrderPeriodEnd
+    price
     quantity
     trial
     dateTrialEnd
@@ -159,5 +160,32 @@ mutation addSubscriptionItem($id: String, $itemId: ID, $quantity: Int) {
     }
     quantity
     priceTotal
+  }
+}
+
+mutation replaceSubscriptionProduct($id: String, $productId: ID,
+  $variantId: ID,
+  $qty: Int, $interval: String, $intervalCount: Int) {
+  updateSubscription(
+    id: $id
+    input: {
+      variantId: $variantId
+      productId: $productId
+      quantity: $qty
+      options: null
+      billingSchedule: {
+        interval: $interval
+        intervalCount: $intervalCount
+      }
+    }
+  ) {
+    product {
+      name
+      id
+      price
+    }
+    quantity
+    trial
+    grandTotal
   }
 }

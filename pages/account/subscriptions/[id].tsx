@@ -552,34 +552,68 @@ const SubscriptionDetailPage: NextPageWithLayout<
         className="border-b-outline mt-10 border-b pb-10"
       />
       <div className="flex gap-x-2">
-        {status !== SUBSCRIPTION_STATUS.CANCELED && (
+        <div className="mt-10 flex flex-col space-y-6">
+          <Button
+            elType={BUTTON_TYPE.BUTTON}
+            small
+            className="w-full md:w-fit"
+            onClick={() => setEditSubscriptionOpen(true)}
+            buttonStyle={BUTTON_STYLE.SECONDARY}>
+            {text.edit.label}
+          </Button>
+          <EditPlanModal
+            subscription={initialSubscription}
+            currency={subscription.currency ?? ''}
+            firstProducts={firstProducts}
+            title="Edit plan"
+            open={editSubscriptionOpen}
+            onClose={() => setEditSubscriptionOpen(false)}
+            actionButtons={[
+              {
+                label: 'Cancel',
+                onClick: () => setEditSubscriptionOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+              {
+                label: 'Save',
+                onClick: cancelSubscription,
+                style: BUTTON_STYLE.PRIMARY,
+              },
+            ]}
+          />
+        </div>
+        {showInvoiceBtn && (
           <div className="mt-10 flex flex-col space-y-6">
             <Button
               elType={BUTTON_TYPE.BUTTON}
               small
               className="w-full md:w-fit"
-              onClick={() => setCancelSubscriptionOpen(true)}
+              onClick={() => setAddInvoiceOpen(true)}
               buttonStyle={BUTTON_STYLE.SECONDARY}>
-              Cancel
+              Add Invoice
             </Button>
-            <ActionModal
-              title={text.cancel.dialogTitle}
-              body={text.cancel.dialogBody}
-              open={cancelSubscriptionOpen}
-              onClose={() => setCancelSubscriptionOpen(false)}
-              actionButtons={[
-                {
-                  label: text.cancel.subscriptionButtonLabel,
-                  onClick: cancelSubscription,
-                  style: BUTTON_STYLE.DANGER,
-                },
-                {
-                  label: text.cancel.buttonLabel,
-                  onClick: () => setCancelSubscriptionOpen(false),
-                  style: BUTTON_STYLE.SECONDARY,
-                },
-              ]}
-            />
+            {subscription.id && subscription.currency && (
+              <AddInvoiceItemModal
+                subscription={subscription.id}
+                currency={subscription.currency}
+                firstProducts={firstProducts}
+                title="Add item"
+                open={addInvoiceOpen}
+                onClose={() => setAddInvoiceOpen(false)}
+                actionButtons={[
+                  {
+                    label: 'Cancel',
+                    onClick: () => setAddInvoiceOpen(false),
+                    style: BUTTON_STYLE.SECONDARY,
+                  },
+                  {
+                    label: 'Save',
+                    onClick: cancelSubscription,
+                    style: BUTTON_STYLE.PRIMARY,
+                  },
+                ]}
+              />
+            )}
           </div>
         )}
         {status !== SUBSCRIPTION_STATUS.PAUSED && (
@@ -642,71 +676,36 @@ const SubscriptionDetailPage: NextPageWithLayout<
             />
           </div>
         )}
-        {showInvoiceBtn && (
+        {status !== SUBSCRIPTION_STATUS.CANCELED && (
           <div className="mt-10 flex flex-col space-y-6">
             <Button
               elType={BUTTON_TYPE.BUTTON}
               small
               className="w-full md:w-fit"
-              onClick={() => setAddInvoiceOpen(true)}
+              onClick={() => setCancelSubscriptionOpen(true)}
               buttonStyle={BUTTON_STYLE.SECONDARY}>
-              Add Invoice
+              Cancel
             </Button>
-            {subscription.id && subscription.currency && (
-              <AddInvoiceItemModal
-                subscription={subscription.id}
-                currency={subscription.currency}
-                firstProducts={firstProducts}
-                title="Add item"
-                open={addInvoiceOpen}
-                onClose={() => setAddInvoiceOpen(false)}
-                actionButtons={[
-                  {
-                    label: 'Cancel',
-                    onClick: () => setAddInvoiceOpen(false),
-                    style: BUTTON_STYLE.SECONDARY,
-                  },
-                  {
-                    label: 'Save',
-                    onClick: cancelSubscription,
-                    style: BUTTON_STYLE.PRIMARY,
-                  },
-                ]}
-              />
-            )}
+            <ActionModal
+              title={text.cancel.dialogTitle}
+              body={text.cancel.dialogBody}
+              open={cancelSubscriptionOpen}
+              onClose={() => setCancelSubscriptionOpen(false)}
+              actionButtons={[
+                {
+                  label: text.cancel.subscriptionButtonLabel,
+                  onClick: cancelSubscription,
+                  style: BUTTON_STYLE.DANGER,
+                },
+                {
+                  label: text.cancel.buttonLabel,
+                  onClick: () => setCancelSubscriptionOpen(false),
+                  style: BUTTON_STYLE.SECONDARY,
+                },
+              ]}
+            />
           </div>
         )}
-
-        <div className="mt-10 flex flex-col space-y-6">
-          <Button
-            elType={BUTTON_TYPE.BUTTON}
-            small
-            className="w-full md:w-fit"
-            onClick={() => setEditSubscriptionOpen(true)}
-            buttonStyle={BUTTON_STYLE.SECONDARY}>
-            {text.edit.label}
-          </Button>
-          <EditPlanModal
-            subscription={initialSubscription}
-            currency={subscription.currency ?? ''}
-            firstProducts={firstProducts}
-            title="Edit plan"
-            open={editSubscriptionOpen}
-            onClose={() => setEditSubscriptionOpen(false)}
-            actionButtons={[
-              {
-                label: 'Cancel',
-                onClick: () => setEditSubscriptionOpen(false),
-                style: BUTTON_STYLE.SECONDARY,
-              },
-              {
-                label: 'Save',
-                onClick: cancelSubscription,
-                style: BUTTON_STYLE.PRIMARY,
-              },
-            ]}
-          />
-        </div>
       </div>
     </article>
   );

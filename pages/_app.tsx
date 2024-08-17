@@ -24,6 +24,7 @@ import { EDITOR_MESSAGE_TYPE } from 'types/editor';
 import { getStoreSettings } from 'lib/shop/fetchingFunctions';
 import { setPreviewMode } from 'lib/utils/previewMode';
 import { sendMessage } from 'utils/editor';
+import Analytics from './Analytics';
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -206,6 +207,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <>
+      {/* <Head> */}
+      <Analytics />
+      {/* </Head> */}
       <ToastProvider>
         {getLayout(<Component {...pageProps} />)}
         {notifications.map((notification) => (

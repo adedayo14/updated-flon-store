@@ -2,6 +2,7 @@ query getSubscriptionById($id: String!) {
   subscriptionById(id: $id) {
     id
     planId
+    productId
     status
     dateCreated
     datePeriodEnd
@@ -11,16 +12,16 @@ query getSubscriptionById($id: String!) {
     trial
     dateTrialEnd
     items {
-     product {
+      product {
         id
         name
         images {
-           caption
-        file {
-          width
-          height
-          url
-        }
+          caption
+          file {
+            width
+            height
+            url
+          }
         }
       }
       priceTotal
@@ -38,6 +39,10 @@ query getSubscriptionById($id: String!) {
           url
         }
       }
+    }
+    variant {
+      name
+      id
     }
     options {
       value
@@ -130,8 +135,11 @@ mutation cancelSubscription($id: String) {
   }
 }
 
-mutation pauseSubscription($id: String, $status: Boolean) {
-  updateSubscription(id: $id, input: { paused: $status }) {
+mutation pauseSubscription($id: String, $status: Boolean, $resumeAt: DateTime) {
+  updateSubscription(
+    id: $id
+    input: { paused: $status, datePauseEnd: $resumeAt }
+  ) {
     paused
   }
 }
@@ -163,9 +171,14 @@ mutation addSubscriptionItem($id: String, $itemId: ID, $quantity: Int) {
   }
 }
 
-mutation replaceSubscriptionProduct($id: String, $productId: ID,
-  $variantId: ID,
-  $qty: Int, $interval: String, $intervalCount: Int) {
+mutation replaceSubscriptionProduct(
+  $id: String
+  $productId: ID
+  $variantId: ID
+  $qty: Int
+  $interval: String
+  $intervalCount: Int
+) {
   updateSubscription(
     id: $id
     input: {
@@ -173,10 +186,34 @@ mutation replaceSubscriptionProduct($id: String, $productId: ID,
       productId: $productId
       quantity: $qty
       options: null
-      billingSchedule: {
-        interval: $interval
-        intervalCount: $intervalCount
-      }
+      billingSchedule: { interval: $interval, intervalCount: $intervalCount }
+    }
+  ) {
+    product {
+      name
+      id
+      price
+    }
+    quantity
+    trial
+    grandTotal
+  }
+}
+
+mutation replaceSubscriptionProductDetails(
+  $id: String
+  $variantId: ID
+  $qty: Int
+  $interval: String
+  $intervalCount: Int
+) {
+  updateSubscription(
+    id: $id
+    input: {
+      variantId: $variantId
+      quantity: $qty
+      options: null
+      billingSchedule: { interval: $interval, intervalCount: $intervalCount }
     }
   ) {
     product {

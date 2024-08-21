@@ -518,14 +518,14 @@ query searchProducts($searchTerm: String, $currency: String) {
         }
       }
       variants {
-         results {
+        results {
           name
           id
         }
       }
-    options {
-      name
-    }
+      options {
+        name
+      }
     }
   }
 }
@@ -549,19 +549,19 @@ query addInvoiceItemFirstProducts {
       name
       price
       images {
-       file {
-        url
+        file {
+          url
+        }
       }
-      }
-       variants {
-         results {
+      variants {
+        results {
           name
           id
         }
       }
-    options {
-      name
-    }
+      options {
+        name
+      }
     }
   }
 }

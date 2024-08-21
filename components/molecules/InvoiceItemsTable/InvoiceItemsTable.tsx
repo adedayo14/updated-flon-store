@@ -120,7 +120,7 @@ const OrderItemsTable: React.FC<InvoiceItemsTableProps> = ({
           invoiceItems.map((item, i) => (
             <tr
               key={`${item.product?.name}${i}`}
-              className="h-full border-outline border-b align-top last:border-none">
+              className="border-outline h-full border-b align-top last:border-none">
               <td className="py-4">
                 <InvoiceItemCard
                   title={
@@ -142,8 +142,8 @@ const OrderItemsTable: React.FC<InvoiceItemsTableProps> = ({
               {[item.quantity, item.priceTotal].map((option, index) => (
                 <td
                   key={`${option}${i}`}
-                  className="h-16 hidden py-4 text-right text-md font-semibold text-primary md:table-cell">
-                  <div className="flex flex-col h-full">
+                  className="hidden h-16 py-4 text-right text-md font-semibold text-primary md:table-cell">
+                  <div className="flex h-full flex-col">
                     <span className="flex-1">{option}</span>
                     {index === 1 && (
                       <div className="mt-10 flex flex-col space-y-6">

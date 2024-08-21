@@ -22,6 +22,7 @@ import ArrowLeft from 'assets/icons/arrow-left.svg';
 import { SUBSCRIPTION_STATUS } from 'types/subscription';
 import Button from 'components/atoms/Button';
 import ActionModal from 'components/molecules/ActionModal';
+import PauseSubscriptionModal from 'components/molecules/PauseSubscriptionModal';
 import AddInvoiceItemModal from 'components/molecules/AddInvoiceItemModal';
 import EditPlanModal from 'components/molecules/EditPlanModal';
 import BannerInfo from 'components/atoms/BannerInfo';
@@ -324,6 +325,7 @@ const formatSubscription = (
   ],
   invoiceItems: subscription.items,
   currency: subscription?.currency,
+  billingSchedule: subscription?.billingSchedule,
 });
 
 export const propsCallback: GetServerSideProps<
@@ -626,17 +628,19 @@ const SubscriptionDetailPage: NextPageWithLayout<
               buttonStyle={BUTTON_STYLE.SECONDARY}>
               Pause
             </Button>
-            <ActionModal
+            <PauseSubscriptionModal
+              interval={subscription?.billingSchedule?.intervalCount ?? 0}
+              nextBillingDate={subscription?.datePeriodEnd}
+              subscriptionId={subscription?.id ?? ''}
               title={text.pause.dialogTitle}
-              body={text.pause.dialogBody}
               open={pauseSubscriptionOpen}
               onClose={() => setPauseSubscriptionOpen(false)}
               actionButtons={[
-                {
-                  label: text.pause.subscriptionButtonLabel,
-                  onClick: () => pauseSubscription(true),
-                  style: BUTTON_STYLE.DANGER,
-                },
+                // {
+                //   label: text.pause.subscriptionButtonLabel,
+                //   onClick: () => pauseSubscription(true),
+                //   style: BUTTON_STYLE.DANGER,
+                // },
                 {
                   label: text.pause.buttonLabel,
                   onClick: () => setPauseSubscriptionOpen(false),

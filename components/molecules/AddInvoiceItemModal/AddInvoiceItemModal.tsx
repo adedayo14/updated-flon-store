@@ -198,12 +198,12 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
           </div>
           <div className="mt-2">
             <Listbox value={selectedItem} onChange={setSelectedItem}>
-              <Listbox.Button className="mt-8 flex items-center gap-x-2 w-full border border-gray-300 rounded-md py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <Listbox.Button className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 mt-8 flex w-full items-center gap-x-2 rounded-md border py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-1 sm:text-sm">
                 {selectedItem?.images?.[0]?.file?.url && (
                   <Image
                     src={selectedItem.images[0].file.url}
                     alt={selectedItem.name?.toString()}
-                    className="inline-block w-6 h-6 mr-2 rounded-md"
+                    className="mr-2 inline-block h-6 w-6 rounded-md"
                     width={40}
                     height={40}
                   />
@@ -214,7 +214,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0">
-                <Listbox.Options className="z-10 md:max-w-[420px] absolute mt-1 w-full bg-background-primary shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                <Listbox.Options className="shadow-lg text-base ring-black absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-background-primary py-1 ring-1 ring-opacity-5 focus:outline-none sm:text-sm md:max-w-[420px]">
                   <div className="px-3 py-2">
                     <div className="relative">
                       <input
@@ -222,12 +222,12 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                         placeholder="Search product"
                         value={searchName}
                         onChange={(e) => setSearchName(e.target.value)}
-                        className="w-full border border-gray-300 rounded-md py-2 px-3 pr-10"
+                        className="border-gray-300 w-full rounded-md border px-3 py-2 pr-10"
                       />
                       <button
                         onClick={handleSearchClick}
                         className="absolute inset-y-0 right-0 flex items-center px-2">
-                        <SearchIcon className="w-5 h-5 text-gray-500" />
+                        <SearchIcon className="text-gray-500 h-5 w-5" />
                       </button>
                     </div>
                   </div>
@@ -236,7 +236,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                       key={item.id}
                       value={item}
                       className={({ active }) =>
-                        `cursor-pointer select-none relative py-2 pl-10 pr-4 ${
+                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                           active
                             ? 'text-amber-900 bg-amber-100'
                             : 'text-gray-900'
@@ -245,7 +245,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                       {({ selected }) => (
                         <>
                           <span
-                            className={`truncate flex items-center justify-between ${
+                            className={`flex items-center justify-between truncate ${
                               selected ? 'font-medium' : 'font-normal'
                             }`}>
                             <div className="flex items-center gap-x-1">
@@ -253,7 +253,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                                 <Image
                                   src={item.images[0].file.url}
                                   alt={item.name?.toString()}
-                                  className="inline-block w-6 h-6 mr-2 rounded-md"
+                                  className="mr-2 inline-block h-6 w-6 rounded-md"
                                   width={40}
                                   height={40}
                                 />
@@ -281,7 +281,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                     type="number"
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
                   />
                 </div>
                 <div className="flex items-center gap-4">
@@ -291,7 +291,7 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -301,17 +301,17 @@ const AddInvoiceItemModal: React.FC<ActionModalProps> = ({
                   </span>
                 </div>
                 {showRecurringCheckbox && (
-                  <div className="flex items-center mt-4">
+                  <div className="mt-4 flex items-center">
                     <input
                       type="checkbox"
                       id="recurring"
                       checked={isRecurring}
                       onChange={() => setIsRecurring(!isRecurring)}
-                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                      className="text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 h-4 w-4"
                     />
                     <label
                       htmlFor="recurring"
-                      className="ml-2 block text-sm text-gray-900">
+                      className="text-gray-900 ml-2 block text-sm">
                       Recurring
                     </label>
                   </div>

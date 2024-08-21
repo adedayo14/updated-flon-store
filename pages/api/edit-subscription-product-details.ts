@@ -9,9 +9,10 @@ export default async function handler(
     return res.status(405).end('Method Not Allowed');
   }
 
-  const { id, status, resumeAt } = req.body;
+  const { id, variantId, quantity, interval } = req.body;
 
-  if (!id) {
+  // Adjust the check to exclude `variantId`
+  if (!id || !quantity || !interval) {
     return res.status(400).end('Bad Request');
   }
 
@@ -20,19 +21,19 @@ export default async function handler(
 
     const {
       data: { updateSubscription },
-    } = await client.pauseSubscription({
+    } = await client.replaceSubscriptionProductDetails({
       id,
-      status: status,
-      resumeAt,
+      variantId: variantId !== undefined ? variantId : null, // Set variantId to null if undefined
+      qty: quantity,
+      interval: 'monthly',
+      intervalCount: interval,
     });
 
-    if (!updateSubscription) {
+    if (updateSubscription == null) {
       return res.status(500).end('Internal Server Error');
     }
 
-    return res
-      .status(200)
-      .send(JSON.stringify({ paused: updateSubscription.paused }));
+    return res.status(200).send(JSON.stringify({ updated: true }));
   } catch (error) {
     return res.status(500).end('Internal Server Error');
   }

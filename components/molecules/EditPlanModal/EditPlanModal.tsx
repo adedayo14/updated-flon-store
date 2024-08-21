@@ -46,7 +46,7 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
       subscription?.product?.images?.[0]?.file?.url || 'fallback-image-url.png';
 
     return {
-      id: subscription.id,
+      id: subscription.productId,
       name: subscription.product?.name || 'Select an item',
       price: subscription.price,
       currency,
@@ -63,62 +63,60 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
     defaultProduct,
   );
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(defaultProduct.price);
-  const [total, setTotal] = useState(defaultProduct.price);
+  const [quantity, setQuantity] = useState(subscription?.quantity);
+  const [price, setPrice] = useState(subscription?.price);
+  const [total, setTotal] = useState(subscription?.grandTotal);
   const [searchName, setSearchName] = useState('');
   const [products, setProducts] = useState(firstProducts);
   const [isRecurring, setIsRecurring] = useState(false);
   const [showRecurringCheckbox] = useState(false);
-  const [selectedVariant, setSelectedVariant] = useState<any>(null); // Replace 'any' with the appropriate type for variant
+  const [selectedVariant, setSelectedVariant] = useState(subscription?.variant);
   const [variants, setVariants] = useState<any[]>([]); // State to hold variants for the selected product
 
   useEffect(() => {
     if (selectedItem?.variants?.results?.length) {
       setVariants(selectedItem?.variants?.results ?? []);
       setSelectedVariant(selectedItem?.variants?.results?.[0] ?? null); // Automatically select the first variant
-    } else {
-      setVariants([]);
-      setSelectedVariant(null);
     }
   }, [selectedItem]);
 
   // New state for plan selection
   const [selectedPlan, setSelectedPlan] = useState({
-    label: 'Monthly',
-    value: 1,
-    price: subscription.price, // Assuming this is the monthly price
+    label: subscription?.billingSchedule?.interval,
+    value: subscription?.billingSchedule?.intervalCount,
+    price: subscription?.grandTotal, // Assuming this is the monthly price
   });
 
   // Plan options
   const planOptions = [
-    { label: 'Monthly', value: 1, price: subscription.price },
+    { label: 'Monthly', value: 1, price: selectedItem?.price },
     {
       label: 'Every 2 months',
       value: 2,
-      price: subscription.price * 2,
+      price: selectedItem?.price,
     },
     {
       label: 'Every 3 months',
       value: 3,
-      price: subscription.price * 3,
+      price: selectedItem?.price,
     },
     {
       label: 'Every 4 months',
       value: 4,
-      price: subscription.price * 4,
+      price: selectedItem?.price,
     },
     {
       label: 'Every 5 months',
       value: 5,
-      price: subscription.price * 5,
+      price: selectedItem?.price,
     },
     {
       label: 'Every 6 months',
       value: 6,
-      price: subscription.price * 6,
+      price: selectedItem?.price,
     },
   ];
+
   const send = useNotificationStore((store) => store.send);
   const fetchApi = useFetchApi();
 
@@ -180,7 +178,7 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
           message: 'Plan has been edited',
           type: NOTIFICATION_TYPE.INFO,
         });
-        setIsButtonDisabled(false); // Re-enable the button
+        setIsButtonDisabled(false);
         window.location.reload();
       } else {
         send({
@@ -223,25 +221,38 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
     (
       planId: string,
       productId: string,
+      planProductId: string,
       variantId: string,
       quantity: number,
       billingInterval: number,
     ) => {
+      console.log(`planProductId:${planProductId}|productId:${productId}`);
       fetchApi(
         {
-          url: API_ROUTES.EDIT_SUBSCRIPTION_PLAN,
+          url:
+            productId === planProductId
+              ? API_ROUTES.EDIT_SUBSCRIPTION_PRODUCT_DETAILS
+              : API_ROUTES.EDIT_SUBSCRIPTION_PLAN,
           options: {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              id: planId,
-              productId,
-              variantId,
-              quantity,
-              interval: billingInterval,
-            }),
+            body:
+              productId === planProductId
+                ? JSON.stringify({
+                    id: planId,
+                    variantId,
+                    quantity,
+                    interval: billingInterval,
+                  })
+                : JSON.stringify({
+                    id: planId,
+                    productId,
+                    variantId,
+                    quantity,
+                    interval: billingInterval,
+                  }),
           },
         },
         (res) => editPlanResponseCallback(res),
@@ -280,32 +291,24 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
   // Reset state when modal is closed
   useEffect(() => {
     if (!open) {
+      setIsButtonDisabled(false);
       setSelectedItem(defaultProduct);
-      setQuantity(1);
-      setPrice(defaultProduct.price);
-      setTotal(defaultProduct.price);
+      setQuantity(subscription?.quantity);
+      setPrice(selectedItem?.price);
     }
-  }, [open, defaultProduct]);
+  }, [open, defaultProduct, subscription, selectedItem]);
 
   // Reset price and total when selected item changes
   useEffect(() => {
     if (selectedItem) {
       setPrice(selectedItem.price || 0);
-      setTotal(selectedItem.price || 0);
     }
   }, [selectedItem]);
 
   // Update total when quantity changes
   useEffect(() => {
-    setTotal(price * quantity);
+    setTotal(price * (quantity ?? 1));
   }, [price, quantity]);
-
-  useEffect(() => {
-    if (selectedPlan) {
-      setPrice(selectedPlan.price);
-      setTotal(selectedPlan.price * quantity);
-    }
-  }, [selectedPlan, quantity]);
 
   return (
     <Transition show={open}>
@@ -328,7 +331,7 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
           leave="duration-500 md:duration-300"
           leaveFrom="translate-y-0 md:-translate-y-1/2 md:opacity-100 md:scale-100"
           leaveTo="translate-y-full md:-translate-y-1/2 md:opacity-0 md:scale-95"
-          className="shadow-xl fixed bottom-0 left-0 z-modal flex h-fit w-full flex-col rounded-t-xl bg-background-primary p-6 text-left align-middle transition-[opacity,_transform] md:left-1/2 md:top-1/2 md:max-w-[463px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-xl">
+          className="shadow-xl fixed bottom-0 left-0 z-modal flex h-5/6 w-full flex-col gap-y-10 rounded-t-xl bg-background-primary p-6 text-left align-middle transition-[opacity,_transform] md:left-1/2 md:top-1/2 md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-xl">
           <div className="flex items-center justify-between">
             <Dialog.Title
               as="h3"
@@ -336,9 +339,9 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
               {title}
             </Dialog.Title>
           </div>
-          <div className="mt-2">
+          <div className="">
             <Listbox value={selectedItem} onChange={setSelectedItem}>
-              <Listbox.Button className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 mt-8 flex w-full items-center gap-x-2 rounded-md border py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-1 sm:text-sm">
+              <Listbox.Button className="flex w-full items-center gap-x-2 rounded-md border border-primary py-2 pl-3 pr-10 text-left text-primary placeholder-shown:border-input-standard focus:border-primary focus:text-primary focus:outline-none focus:outline-none focus:ring-1 sm:text-sm">
                 <Image
                   src={selectedItem?.images?.[0]?.file?.url ?? ''}
                   alt={(selectedItem?.name || name) as string | undefined}
@@ -352,7 +355,7 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0">
-                <Listbox.Options className="shadow-lg text-base ring-black absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-background-primary py-1 ring-1 ring-opacity-5 focus:outline-none sm:text-sm md:max-w-[420px]">
+                <Listbox.Options className="shadow-lg ring-black absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-background-primary py-1 text-primary ring-1 ring-opacity-5 focus:outline-none sm:text-sm md:max-w-[420px]">
                   <div className="px-3 py-2">
                     <div className="relative">
                       <input
@@ -373,12 +376,8 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
                     <Listbox.Option
                       key={item.id}
                       value={item}
-                      className={({ active }) =>
-                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                          active
-                            ? 'text-amber-900 bg-amber-100'
-                            : 'text-gray-900'
-                        }`
+                      className={() =>
+                        `relative cursor-pointer select-none py-2 pl-10 pr-4`
                       }>
                       {({ selected }) => (
                         <>
@@ -414,29 +413,25 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
           {selectedItem?.variants &&
             selectedItem?.variants?.results &&
             selectedItem?.variants?.results[0] && (
-              <div className="mt-4">
-                <label className="text-gray-700 block text-sm font-medium">
+              <div className="">
+                <label className="block text-sm font-medium text-primary">
                   {selectedItem?.options?.[0]?.name ?? 'Default Name'}
                 </label>
                 <Listbox value={selectedVariant} onChange={setSelectedVariant}>
-                  <Listbox.Button className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 mt-1 flex w-full items-center gap-x-2 rounded-md border py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-1 sm:text-sm">
+                  <Listbox.Button className="flex w-full items-center gap-x-2 rounded-md border border-primary py-2 pl-3 pr-10 text-left text-primary placeholder-shown:border-input-standard focus:border-primary focus:text-primary focus:outline-none focus:outline-none focus:ring-1 sm:text-sm">
                     {selectedVariant?.name || 'Select a variant'}
                   </Listbox.Button>
                   <Transition
                     leave="transition ease-in duration-100"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0">
-                    <Listbox.Options className="shadow-lg text-base ring-black absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-background-primary py-1 ring-1 ring-opacity-5 focus:outline-none sm:text-sm md:max-w-[420px]">
+                    <Listbox.Options className="shadow-lg ring-black absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-background-primary py-1 text-primary ring-1 ring-opacity-5 focus:outline-none sm:text-sm md:max-w-[420px]">
                       {variants.map((variant, idx) => (
                         <Listbox.Option
                           key={idx}
                           value={variant}
-                          className={({ active }) =>
-                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                              active
-                                ? 'text-amber-900 bg-amber-100'
-                                : 'text-gray-900'
-                            }`
+                          className={() =>
+                            `relative cursor-pointer select-none py-2 pl-10 pr-4`
                           }>
                           {variant.name}
                         </Listbox.Option>
@@ -447,31 +442,26 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
               </div>
             )}
 
-          <div className="mt-4">
-            <label className="text-gray-700 block text-sm font-medium">
+          <div className="">
+            <label className="block text-sm font-medium text-primary">
               Plan
             </label>
             <Listbox value={selectedPlan} onChange={setSelectedPlan}>
-              <Listbox.Button className="border-gray-300 shadow-sm mt-1 w-full rounded-md border bg-background-primary py-2 pl-3 pr-10 text-left focus:outline-none sm:text-sm">
-                {selectedPlan.label},{' '}
-                {formatPriceByCurrency(currency)(selectedPlan.price)}
+              <Listbox.Button className="flex w-full items-center gap-x-2 rounded-md border border-primary py-2 pl-3 pr-10 text-left text-primary placeholder-shown:border-input-standard focus:border-primary focus:text-primary focus:outline-none focus:outline-none focus:ring-1 sm:text-sm">
+                {planOptions[(selectedPlan?.value ?? 1) - 1].label},{' '}
+                {formatPriceByCurrency(currency)(selectedItem?.price)}
               </Listbox.Button>
               <Transition
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0">
-                <Listbox.Options className="shadow-lg text-base ring-black absolute z-10 mt-1 max-h-60 w-full max-w-sm overflow-auto rounded-md bg-background-primary py-1 ring-1 ring-opacity-5 focus:outline-none sm:text-sm">
+                <Listbox.Options className="shadow-lg ring-black absolute z-10 mt-1 max-h-60 w-full max-w-sm overflow-auto rounded-md bg-background-primary py-1 text-primary ring-1 ring-opacity-5 focus:outline-none sm:text-sm">
                   {planOptions.map((plan) => (
                     <Listbox.Option
                       key={plan.value}
                       value={plan}
-                      className={({ active }) =>
-                        `${
-                          active
-                            ? 'text-amber-900 bg-amber-100'
-                            : 'text-gray-900'
-                        }
-                      relative cursor-default select-none py-2 pl-3 pr-9`
+                      className={() =>
+                        `relative cursor-default select-none py-2 pl-3 pr-9`
                       }>
                       {({ selected }) => (
                         <>
@@ -492,30 +482,31 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
             </Listbox>
           </div>
 
-          <div className="mt-4">
+          <div className="">
             <div className="flex gap-4">
               <div className="flex items-center gap-4">
-                <label className="w-20 text-sm">Quantity:</label>
+                <label className="w-20 text-sm text-primary">Quantity:</label>
                 <input
+                  min={1}
                   type="number"
-                  value={quantity}
+                  value={quantity ?? 1}
                   onChange={(e) => setQuantity(Number(e.target.value))}
-                  className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+                  className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-full rounded-md border px-3 py-2 text-sm text-primary focus:outline-none focus:ring-1"
                 />
               </div>
               <div className="flex items-center gap-4">
-                <label className="w-20 text-sm">Price:</label>
+                <label className="w-20 text-sm text-primary">Price:</label>
                 <input
                   disabled
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
-                  className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+                  className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-full rounded-md border px-3 py-2 text-sm text-primary focus:outline-none focus:ring-1"
                 />
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm">Total:</label>
-                <span className="text-lg font-semibold">
+                <label className="mr-2 text-sm text-primary">Total:</label>
+                <span className="text-lg font-semibold text-primary">
                   {formatPriceByCurrency(currency)(total)}
                 </span>
               </div>
@@ -538,7 +529,7 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
             </div>
           </div>
 
-          <div className="mt-8 flex space-x-2">
+          <div className="mt-auto flex space-x-2">
             {actionButtons.map(({ label, style, onClick }, i) => (
               <Button
                 key={`${label}${i}`}
@@ -546,19 +537,20 @@ const EditPlanModal: React.FC<ActionModalProps> = ({
                 buttonStyle={style}
                 onClick={async () => {
                   if (subscription && i === 1) {
-                    setIsButtonDisabled(true); // Disable the button
+                    setIsButtonDisabled(true);
                     await editPlan(
                       subscription?.id ?? '',
                       selectedItem?.id ?? '',
+                      subscription?.productId ?? '',
                       selectedVariant?.id ?? '',
-                      quantity,
-                      selectedPlan?.value,
+                      quantity ?? 1,
+                      selectedPlan?.value ?? 1,
                     );
                   } else {
                     onClick();
                   }
                 }}
-                disabled={isButtonDisabled}
+                disabled={i === 1 ? isButtonDisabled : false}
                 className="text-center"
                 fullWidth
                 tabIndex={0}>

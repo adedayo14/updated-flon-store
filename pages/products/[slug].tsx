@@ -258,7 +258,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
   return (
     <div>
       <Head>
-        <title>{meta.title} - Horizon</title>
+        <title>{meta.title} - Flon</title>
         <meta name="description" content={meta.description} />
       </Head>
       <article className="flex flex-col lg:grid lg:grid-cols-2">

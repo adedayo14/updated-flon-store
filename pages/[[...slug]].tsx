@@ -18,98 +18,115 @@ export const getStaticPaths: GetStaticPaths = async ({
   locales,
   defaultLocale,
 }) => {
-  const client = getGQLClient();
-  const {
-    data: { storeSettings },
-  } = await client.getStoreSettings();
+  try {
+    const client = getGQLClient();
+    const {
+      data: { storeSettings },
+    } = await client.getStoreSettings();
 
-  const homePageKey = storeSettings?.store?.homePage ?? 'home';
+    const homePageKey = storeSettings?.store?.homePage ?? 'home';
 
-  const {
-    data: { contentPages },
-  } = await client.getContentPages();
+    const {
+      data: { contentPages },
+    } = await client.getContentPages();
 
-  const pages = (contentPages?.results?.filter(
-    (page) => page?.published && page.slug,
-  ) ?? []) as { slug: string; published: boolean }[];
+    const pages = (contentPages?.results?.filter(
+      (page) => page?.published && page.slug,
+    ) ?? []) as { slug: string; published: boolean }[];
 
-  const paths: { params: ParsedUrlQuery; locale?: string }[] = [];
+    const paths: { params: ParsedUrlQuery; locale?: string }[] = [];
 
-  const getPath = (slug: string, locale?: string) => ({
-    params: {
-      slug: slug === homePageKey ? [''] : [slug],
-    },
-    locale,
-  });
+    const getPath = (slug: string, locale?: string) => ({
+      params: {
+        slug: slug === homePageKey ? [''] : [slug],
+      },
+      locale,
+    });
 
-  pages.forEach((staticPage) => {
-    if (!staticPage) return;
+    pages.forEach((staticPage) => {
+      if (!staticPage) return;
 
-    const { slug, published } = staticPage;
+      const { slug, published } = staticPage;
 
-    if (!slug || !published) return;
+      if (!slug || !published) return;
 
-    const localesArray = locales?.length ? locales : [defaultLocale];
+      const localesArray = locales?.length ? locales : [defaultLocale];
 
-    const localePaths = localesArray.map((locale) => getPath(slug, locale));
+      const localePaths = localesArray.map((locale) => getPath(slug, locale));
 
-    paths.push(...localePaths);
-  });
+      paths.push(...localePaths);
+    });
 
-  return {
-    paths,
-    fallback: 'blocking',
-  };
+    return {
+      paths,
+      fallback: 'blocking',
+    };
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    // Return minimal paths to prevent build failure
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
 };
 
 const propsCallback: GetStaticProps<StaticPageProps> = async (context) => {
-  const client = getGQLClient();
-  const {
-    data: { storeSettings },
-  } = await client.getStoreSettings();
+  try {
+    const client = getGQLClient();
+    const {
+      data: { storeSettings },
+    } = await client.getStoreSettings();
 
-  const homePageKey = storeSettings?.store?.homePage ?? 'home';
+    const homePageKey = storeSettings?.store?.homePage ?? 'home';
 
-  const defaultLocale = storeSettings?.store?.locale;
+    const defaultLocale = storeSettings?.store?.locale;
 
-  const slug = context.params?.slug ?? homePageKey;
+    const slug = context.params?.slug ?? homePageKey;
 
-  const locale = context.locale ?? defaultLocale ?? '';
+    const locale = context.locale ?? defaultLocale ?? '';
 
-  // TODO: Replace this REST call with GraphQL
-  const editorData = (await fetchPageData(
-    slug as string,
-    locale,
-  )) as EditorPageOutput;
+    // TODO: Replace this REST call with GraphQL
+    const editorData = (await fetchPageData(
+      slug as string,
+      locale,
+    )) as EditorPageOutput;
 
-  // Show 404 if page is not found or not published.
-  // If the NEXT_PUBLIC_SWELL_EDITOR is true, show the page even if it is not published.
-  if (
-    !editorData ||
-    (process.env.NEXT_PUBLIC_SWELL_EDITOR !== 'true' && !editorData.published)
-  ) {
+    // Show 404 if page is not found or not published.
+    // If the NEXT_PUBLIC_SWELL_EDITOR is true, show the page even if it is not published.
+    if (
+      !editorData ||
+      (process.env.NEXT_PUBLIC_SWELL_EDITOR !== 'true' && !editorData.published)
+    ) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const mappedSections = await mapSectionProps(
+      denullifyArray(editorData.sections),
+    );
+
+    const props: StaticPageProps = {
+      title: editorData.name ?? '',
+      metaTitle: editorData.meta_title ?? '',
+      metaDescription: editorData.meta_description ?? '',
+      sections: mappedSections,
+    };
+
+    return {
+      props: {
+        ...props,
+        ...(locale ? { locale } : {}),
+      },
+      revalidate: 60, // Add ISR revalidation to reduce build time
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
     return {
       notFound: true,
     };
   }
-
-  const mappedSections = await mapSectionProps(
-    denullifyArray(editorData.sections),
-  );
-
-  const props: StaticPageProps = {
-    title: editorData.name ?? '',
-    metaTitle: editorData.meta_title ?? '',
-    metaDescription: editorData.meta_description ?? '',
-    sections: mappedSections,
-  };
-
-  return {
-    props: {
-      ...props,
-      ...(locale ? { locale } : {}),
-    },
-  };
 };
 
 export const getStaticProps = withMainLayout(propsCallback);

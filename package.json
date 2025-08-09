@@ -6,6 +6,7 @@
     "dev": "yarn setup && next dev",
     "generate": "yarn build",
     "build": "yarn setup && next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
     "test": "jest",
     "test:watch": "jest --watch",

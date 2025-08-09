@@ -5,6 +5,11 @@ const graphqlKey = process.env.NEXT_PUBLIC_SWELL_PUBLIC_KEY;
 /** @type {import('next').NextConfig} */
 let nextConfig = {
   reactStrictMode: true,
+  swcMinify: true, // Use SWC for faster builds
+  experimental: {
+    // Enable modern features for better performance
+    esmExternals: true,
+  },
   images: {
     domains: [
       'cdn.schema.io',
@@ -14,12 +19,22 @@ let nextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  webpack(config) {
+  webpack(config, { isServer }) {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
       use: ['@svgr/webpack'],
     });
+
+    // Optimize for serverless
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
 
     return config;
   },
@@ -41,19 +56,41 @@ module.exports = async () => {
   const getLocalesConfig = async () => {
     if (!storeUrl || !graphqlKey) return null;
 
-    const res = await fetch(`${storeUrl}/api/settings`, {
-      headers: {
-        Authorization: graphqlKey,
-      },
-    });
-    const data = await res.json();
+    try {
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-    if (!data?.store?.locales?.length) return null;
+      const res = await fetch(`${storeUrl}/api/settings`, {
+        headers: {
+          Authorization: graphqlKey,
+        },
+        signal: controller.signal,
+      });
 
-    return {
-      locales: data.store.locales.map((locale) => locale.code),
-      defaultLocale: data.store.locales.map((locale) => locale.code)[0],
-    };
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        console.warn('Failed to fetch store settings for i18n config');
+        return null;
+      }
+
+      const data = await res.json();
+
+      if (!data?.store?.locales?.length) return null;
+
+      return {
+        locales: data.store.locales.map((locale) => locale.code),
+        defaultLocale: data.store.locales.map((locale) => locale.code)[0],
+      };
+    } catch (error) {
+      console.warn('Error fetching store settings for i18n config:', error);
+      // Return a fallback configuration to prevent build failure
+      return {
+        locales: ['en'],
+        defaultLocale: 'en',
+      };
+    }
   };
 
   const i18n = await getLocalesConfig();

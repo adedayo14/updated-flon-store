@@ -8,17 +8,38 @@ const authorization = `Basic ${Buffer.from(
 const query =
   process.env.NEXT_PUBLIC_SWELL_EDITOR === 'true' ? '$preview=true' : '';
 
-export const fetchStoreData = async (endpoint: string, locale = '') =>
-  await fetch(
-    `${process.env.NEXT_PUBLIC_SWELL_STORE_URL}${endpoint}?${encodeURI(query)}`,
-    {
-      headers: {
-        authorization,
-        'content-type': 'application/json',
-        'x-locale': locale,
+export const fetchStoreData = async (endpoint: string, locale = '') => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SWELL_STORE_URL}${endpoint}?${encodeURI(query)}`,
+      {
+        headers: {
+          authorization,
+          'content-type': 'application/json',
+          'x-locale': locale,
+        },
+        signal: controller.signal,
       },
-    },
-  ).then((res) => res.json());
+    );
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timed out');
+    }
+    throw error;
+  }
+};
 
 export const fetchQuizData = (id: string, locale: string) =>
   fetchStoreData(`/api/content/quizzes/${id}/`, locale);

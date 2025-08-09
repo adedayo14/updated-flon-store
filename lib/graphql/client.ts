@@ -27,6 +27,7 @@ export const getRawClient = () =>
     headers:
       // This needs to be destructured to avoid making changes to the original "headers" object that persist with new requests
       { ...headers },
+    timeout: 15000, // 15 second timeout
   });
 
 export const getClientWithSessionToken = (

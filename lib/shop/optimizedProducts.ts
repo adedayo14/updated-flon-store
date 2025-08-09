@@ -1,5 +1,6 @@
 import getGQLClient from 'lib/graphql/client';
 import { fetchStoreData } from 'lib/rest/fetchStoreData';
+import { denullifyArray } from 'lib/utils/denullify';
 import type { PurchasableProductData } from 'types/shared/products';
 
 export interface ProductsQueryOptions {
@@ -82,8 +83,9 @@ export const fetchProductsPaginated = async (options: ProductsQueryOptions = {})
     });
 
     if (graphqlResponse?.data?.products) {
+      const products = denullifyArray(graphqlResponse.data.products.results) as PurchasableProductData[];
       return {
-        products: graphqlResponse.data.products.results || [],
+        products,
         count: graphqlResponse.data.products.count || 0,
         page: graphqlResponse.data.products.page || 1,
         pages: graphqlResponse.data.products.pages || 1,

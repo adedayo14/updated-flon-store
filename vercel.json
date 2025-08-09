@@ -6,18 +6,5 @@
     "pages/**/*.{js,ts,tsx}": {
       "maxDuration": 60
     }
-  },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "maxLambdaSize": "50mb",
-        "includeFiles": [
-          "config/**",
-          "public/**"
-        ]
-      }
-    }
-  ]
+  }
 }

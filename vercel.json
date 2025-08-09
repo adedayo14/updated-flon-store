@@ -1,5 +1,4 @@
 {
-  "_comment": "Force deployment trigger",
   "functions": {
     "pages/api/**/*.{js,ts}": {
       "maxDuration": 30

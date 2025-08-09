@@ -2,7 +2,7 @@ query getProductsPaginated($currency: String, $limit: Int, $page: Int, $sort: St
   products(_currency: $currency, limit: $limit, page: $page, sort: $sort, where: $where) {
     count
     page
-    pages
+    pageCount
     results {
       id
       name
@@ -38,10 +38,8 @@ query getProductsPaginated($currency: String, $limit: Int, $page: Int, $sort: St
           id
           name
           price
-          salePrice
           origPrice
           optionValueIds
-          stockStatus
           images {
             caption
             file {
@@ -65,19 +63,14 @@ query getProductsCount($currency: String, $where: JSON) {
 query getProductFilters {
   attributes(where: { filterable: true }) {
     results {
-      id
       name
       type
-      values {
-        id
-        name
-      }
+      values
     }
   }
   
   categories(limit: 100) {
     results {
-      id
       name
       slug
       description

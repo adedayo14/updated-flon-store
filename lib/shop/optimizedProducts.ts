@@ -84,11 +84,14 @@ export const fetchProductsPaginated = async (options: ProductsQueryOptions = {})
 
     if (graphqlResponse?.data?.products) {
       const products = denullifyArray(graphqlResponse.data.products.results) as PurchasableProductData[];
+      const count = graphqlResponse.data.products.count || 0;
+      const pages = Math.ceil(count / limit);
+      
       return {
         products,
-        count: graphqlResponse.data.products.count || 0,
+        count,
         page: graphqlResponse.data.products.page || 1,
-        pages: graphqlResponse.data.products.pages || 1,
+        pages,
       };
     }
 

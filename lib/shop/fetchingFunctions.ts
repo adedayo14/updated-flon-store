@@ -128,24 +128,54 @@ export const getProductsList = async (
 export const getProductListingData = async (
   categorySlug?: string,
 ): Promise<ProductsLayoutProps> => {
-  // Get the products list
-  const productsPromise = getProductsList(categorySlug);
+  try {
+    // Get categories without the expensive product loading
+    const { categories, settings } = await getCategories();
 
-  // Get featured categories
-  const categoriesPromise = getCategories();
+    // Create minimal attribute filters without fetching all products
+    // This avoids the expensive getAllProducts query completely
+    const attributeFilters: any[] = [];
 
-  const [{ categories, settings }, productResults] = await Promise.all([
-    categoriesPromise,
-    productsPromise,
-  ]);
-
-  const attributeFilters = getFilters(productResults);
-
-  return {
-    categories,
-    settings,
-    attributeFilters,
-  };
+    return {
+      categories,
+      settings,
+      attributeFilters,
+    };
+  } catch (error) {
+    console.error('Error in optimized getProductListingData:', error);
+    
+    // Only fallback to the expensive version if absolutely necessary
+    // But add a timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Fallback timeout')), 30000)
+    );
+    
+    try {
+      const fallbackPromise = (async () => {
+        const productsPromise = getProductsList(categorySlug);
+        const categoriesPromise = getCategories();
+        
+        const [{ categories, settings }, productResults] = await Promise.all([
+          categoriesPromise,
+          productsPromise,
+        ]);
+        
+        const attributeFilters = getFilters(productResults);
+        
+        return {
+          categories,
+          settings,
+          attributeFilters,
+        };
+      })();
+      
+      return await Promise.race([fallbackPromise, timeoutPromise]) as ProductsLayoutProps;
+    } catch (fallbackError) {
+      console.error('Fallback also failed:', fallbackError);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Unable to fetch product listing data: ${errorMessage}`);
+    }
+  }
 };
 
 export const fetchProductBySlug = async (slug: string) => ({

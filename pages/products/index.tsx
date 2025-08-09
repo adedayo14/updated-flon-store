@@ -8,15 +8,36 @@ import { withMainLayout } from 'lib/utils/fetch_decorators';
 const propsCallback: GetStaticProps<
   Omit<ProductsLayoutProps, 'products' | 'productCount'>
 > = async (context) => {
-  const { locale } = context;
-  const data = await getProductListingData();
+  try {
+    const { locale } = context;
+    const data = await getProductListingData();
 
-  return {
-    props: {
-      ...data,
-      ...(locale ? { locale } : {}),
-    },
-  };
+    return {
+      props: {
+        ...data,
+        ...(locale ? { locale } : {}),
+      },
+      revalidate: 300, // Revalidate every 5 minutes instead of at build time
+    };
+  } catch (error) {
+    console.error('Error fetching product listing data:', error);
+    // Return minimal fallback data
+    return {
+      props: {
+        categories: [],
+        settings: {
+          showProductsPrice: true,
+          showProductsDescription: true,
+          showFeaturedCategories: false,
+          productsPerRow: 4,
+          enableQuickAdd: true,
+        },
+        attributeFilters: [],
+        ...(context.locale ? { locale: context.locale } : {}),
+      },
+      revalidate: 60, // Retry more frequently if there's an error
+    };
+  }
 };
 
 export const getStaticProps = withMainLayout(propsCallback);

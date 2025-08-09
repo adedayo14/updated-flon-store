@@ -17,7 +17,7 @@ const propsCallback: GetStaticProps<
         ...data,
         ...(locale ? { locale } : {}),
       },
-      revalidate: 300, // Revalidate every 5 minutes instead of at build time
+      revalidate: 3600, // Cache for 1 hour - perfect for small stores with 15-20 products
     };
   } catch (error) {
     console.error('Error fetching product listing data:', error);

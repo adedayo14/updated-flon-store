@@ -134,7 +134,6 @@ const useCartStore = create<CartState>((set, get) => ({
           checkoutUrl: cart.data.checkoutUrl,
           empty: !cart.data.items.length,
         },
-        lastFetch: Date.now(),
       }));
 
       if (config.showCartAfter) {

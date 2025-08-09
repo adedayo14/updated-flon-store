@@ -1,0 +1,86 @@
+query getProductsPaginated($currency: String, $limit: Int, $page: Int, $sort: String, $where: JSON) {
+  products(_currency: $currency, limit: $limit, page: $page, sort: $sort, where: $where) {
+    count
+    page
+    pages
+    results {
+      id
+      name
+      description
+      slug
+      price
+      sale
+      salePrice
+      origPrice
+      currency
+      categories {
+        name
+        slug
+      }
+      images {
+        caption
+        file {
+          width
+          height
+          url
+        }
+      }
+      purchaseOptions {
+        standard {
+          price
+          sale
+          salePrice
+          origPrice
+        }
+      }
+      variants {
+        results {
+          id
+          name
+          price
+          salePrice
+          origPrice
+          optionValueIds
+          stockStatus
+          images {
+            caption
+            file {
+              width
+              height
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query getProductsCount($currency: String, $where: JSON) {
+  products(_currency: $currency, where: $where, limit: 1) {
+    count
+  }
+}
+
+query getProductFilters {
+  attributes(where: { filterable: true }) {
+    results {
+      id
+      name
+      type
+      values {
+        id
+        name
+      }
+    }
+  }
+  
+  categories(limit: 100) {
+    results {
+      id
+      name
+      slug
+      description
+    }
+  }
+}

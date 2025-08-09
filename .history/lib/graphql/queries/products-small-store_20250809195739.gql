@@ -1,0 +1,38 @@
+query getAllProductsOptimized($currency: String) {
+  products(_currency: $currency, limit: 25) {
+    count
+    results {
+      id
+      name
+      description
+      slug
+      price
+      sale
+      salePrice
+      origPrice
+      currency
+      categories {
+        name
+        slug
+      }
+      images {
+        caption
+        file {
+          width
+          height
+          url
+        }
+      }
+      # Removed heavy fields like variants, options, etc. for faster loading
+      # Perfect for small stores with 15-20 products
+      purchaseOptions {
+        standard {
+          price
+          sale
+          salePrice
+          origPrice
+        }
+      }
+    }
+  }
+}

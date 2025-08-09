@@ -20,10 +20,6 @@ const endpoint = graphqlEndpoint;
 const headers = {
   Authorization: graphqlKey,
   'Cache-Control': 'no-cache',
-  // Add compression to reduce payload size
-  'Accept-Encoding': 'gzip, deflate, br',
-  // Keep connection alive for faster subsequent requests
-  'Connection': 'keep-alive',
 };
 
 export const getRawClient = () =>
@@ -31,7 +27,7 @@ export const getRawClient = () =>
     headers:
       // This needs to be destructured to avoid making changes to the original "headers" object that persist with new requests
       { ...headers },
-    timeout: 8000, // Reduce timeout from 15s to 8s for faster failures
+    timeout: 15000, // 15 second timeout
   });
 
 export const getClientWithSessionToken = (

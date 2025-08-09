@@ -31,9 +31,6 @@ interface CartState {
   updateItem: (itemId: string, input: SwellCartItemInput) => Promise<void>;
 }
 
-// Cache cart for 60 seconds to avoid fetching on every page load
-const CART_CACHE_TIME = 60 * 1000;
-
 const useCartStore = create<CartState>((set, get) => ({
   cart: {
     total: 0,
@@ -44,32 +41,11 @@ const useCartStore = create<CartState>((set, get) => ({
       set((state) => ({ cart: { ...state.cart, visible } })),
     checkoutUrl: '#',
   },
-  lastFetch: 0,
-  isLoading: false,
   showCart: () => set((state) => ({ cart: { ...state.cart, visible: true } })),
   hideCart: () => set((state) => ({ cart: { ...state.cart, visible: false } })),
-  getCart: async (force = false) => {
-    const state = get();
-    const now = Date.now();
-    
-    // Skip if recently fetched and not forced
-    if (!force && (now - state.lastFetch) < CART_CACHE_TIME && state.lastFetch > 0) {
-      return;
-    }
-
-    // Skip if already loading to prevent duplicate requests
-    if (state.isLoading) {
-      return;
-    }
-
-    set({ isLoading: true });
-
+  getCart: async () => {
     try {
-      const res = await fetch(API_ROUTES.CART, {
-        headers: {
-          'Cache-Control': 'max-age=30',
-        }
-      });
+      const res = await fetch(API_ROUTES.CART);
 
       const cart = (await res.json()) as CartData;
 
@@ -81,12 +57,9 @@ const useCartStore = create<CartState>((set, get) => ({
           checkoutUrl: cart.data.checkoutUrl,
           empty: !cart.data.items.length,
         },
-        lastFetch: now,
-        isLoading: false,
       }));
     } catch (error) {
-      console.error('Cart fetch error:', error);
-      set({ isLoading: false });
+      console.error(error);
     }
   },
   addToCart: async (input: CartItemInput, config = { showCartAfter: true }) => {
@@ -134,7 +107,6 @@ const useCartStore = create<CartState>((set, get) => ({
           checkoutUrl: cart.data.checkoutUrl,
           empty: !cart.data.items.length,
         },
-        lastFetch: Date.now(),
       }));
 
       if (config.showCartAfter) {

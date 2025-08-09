@@ -81,12 +81,12 @@ export const fetchProductsPaginated = async (options: ProductsQueryOptions = {})
       where: Object.keys(whereClause).length > 0 ? whereClause : undefined
     });
 
-    if (graphqlResponse?.products) {
+    if (graphqlResponse?.data?.products) {
       return {
-        products: graphqlResponse.products.results || [],
-        count: graphqlResponse.products.count || 0,
-        page: graphqlResponse.products.page || 1,
-        pages: graphqlResponse.products.pages || 1,
+        products: graphqlResponse.data.products.results || [],
+        count: graphqlResponse.data.products.count || 0,
+        page: graphqlResponse.data.products.page || 1,
+        pages: graphqlResponse.data.products.pages || 1,
       };
     }
 

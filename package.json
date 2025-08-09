@@ -2,6 +2,10 @@
   "name": "@swell/horizon",
   "version": "0.5.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "yarn setup && next dev",
     "generate": "yarn build",
@@ -84,7 +88,7 @@
     "@types/cookie": "^0.4.1",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.set": "^4.3.7",
-    "@types/node": "^18.6.3",
+    "@types/node": "^22.9.0",
     "@types/react": "17.0.39",
     "@types/tailwindcss": "^3.1.0",
     "@typescript-eslint/eslint-plugin": "^5.13.0",

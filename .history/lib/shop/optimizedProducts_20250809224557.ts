@@ -61,6 +61,47 @@ export const fetchProductsPaginated = async (options: ProductsQueryOptions = {})
     // Fallback to a limited GraphQL query if REST fails
     console.warn('REST API failed, falling back to limited GraphQL query');
     
+    const graphqlQuery = `
+      query getProductsLimited($limit: Int, $page: Int, $sort: String, $where: JSON) {
+        products(limit: $limit, page: $page, sort: $sort, where: $where) {
+          count
+          page
+          pages
+          results {
+            id
+            name
+            description
+            slug
+            price
+            sale
+            salePrice
+            origPrice
+            currency
+            categories {
+              name
+              slug
+            }
+            images {
+              caption
+              file {
+                width
+                height
+                url
+              }
+            }
+            purchaseOptions {
+              standard {
+                price
+                sale
+                salePrice
+                origPrice
+              }
+            }
+          }
+        }
+      }
+    `;
+
     let whereClause: any = {};
     if (category) {
       whereClause.categories = { slug: category };

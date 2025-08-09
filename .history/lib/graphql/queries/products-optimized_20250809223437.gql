@@ -2,6 +2,7 @@ query getProductsPaginated($currency: String, $limit: Int, $page: Int, $sort: St
   products(_currency: $currency, limit: $limit, page: $page, sort: $sort, where: $where) {
     count
     page
+    pageCount
     results {
       id
       name

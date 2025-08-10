@@ -1,6 +1,4 @@
-import getGQLClient from 'lib/graphql/client';
 import { fetchStoreData } from 'lib/rest/fetchStoreData';
-import { denullifyArray } from 'lib/utils/denullify';
 import type { PurchasableProductData } from 'types/shared/products';
 
 export interface ProductsQueryOptions {
@@ -40,6 +38,7 @@ export const fetchProductsPaginated = async (options: ProductsQueryOptions = {})
       sort,
       ...(category && { category }),
       ...(search && { search }),
+      ...(currency && { currency }),
       ...Object.keys(filters).reduce((acc, key) => {
         if (filters[key]) {
           acc[key] = filters[key].toString();
@@ -59,43 +58,7 @@ export const fetchProductsPaginated = async (options: ProductsQueryOptions = {})
       };
     }
 
-    // Fallback to a limited GraphQL query if REST fails
-    console.warn('REST API failed, falling back to limited GraphQL query');
-    
-    let whereClause: any = {};
-    if (category) {
-      whereClause.categories = { slug: category };
-    }
-    if (search) {
-      whereClause.name = { $regex: search, $options: 'i' };
-    }
-    if (Object.keys(filters).length > 0) {
-      whereClause = { ...whereClause, ...filters };
-    }
-
-    const client = getGQLClient();
-    const graphqlResponse = await client.getProductsPaginated({
-      currency,
-      limit,
-      page,
-      sort,
-      where: Object.keys(whereClause).length > 0 ? whereClause : undefined
-    });
-
-    if (graphqlResponse?.data?.products) {
-      const products = denullifyArray(graphqlResponse.data.products.results) as PurchasableProductData[];
-      const count = graphqlResponse.data.products.count || 0;
-      const pages = Math.ceil(count / limit);
-      
-      return {
-        products,
-        count,
-        page: graphqlResponse.data.products.page || 1,
-        pages,
-      };
-    }
-
-    throw new Error('Both REST and GraphQL queries failed');
+    throw new Error('REST API query failed');
 
   } catch (error) {
     console.error('Error fetching products:', error);

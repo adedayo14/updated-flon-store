@@ -1,6 +1,7 @@
 import { generateId } from 'lib/utils/shared_functions';
 import type { SwellProductOption } from 'lib/graphql/generated/sdk';
 import { denullifyArray } from 'lib/utils/denullify';
+import { getFilters } from './filters';
 import getGQLClient from 'lib/graphql/client';
 import type { CategoryPreviewCardProps } from 'components/atoms/CategoryPreviewCard';
 import type {
@@ -124,7 +125,9 @@ export const getProductsList = async (
   return productResults;
 };
 
-export const getProductListingData = async (): Promise<ProductsLayoutProps> => {
+export const getProductListingData = async (
+  categorySlug?: string,
+): Promise<ProductsLayoutProps> => {
   try {
     // Get categories with timeout to prevent 500 errors
     const { categories, settings } = await Promise.race([

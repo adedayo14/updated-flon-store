@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import create from 'zustand';
 import useNotificationStore from 'stores/notification';
 import { isStockLimited } from 'lib/utils/products';
 import { NOTIFICATION_TYPE } from 'types/shared/notification';

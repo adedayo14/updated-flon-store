@@ -124,7 +124,9 @@ export const getProductsList = async (
   return productResults;
 };
 
-export const getProductListingData = async (): Promise<ProductsLayoutProps> => {
+export const getProductListingData = async (
+  categorySlug?: string,
+): Promise<ProductsLayoutProps> => {
   try {
     // Get categories with timeout to prevent 500 errors
     const { categories, settings } = await Promise.race([

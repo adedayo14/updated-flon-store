@@ -29,8 +29,9 @@ export default async function handler(
       )
     ]);
 
-    const response = await searchWithTimeout as any;
-    const products = response?.data?.products;
+    const {
+      data: { products },
+    } = await searchWithTimeout;
 
     if (products == null) {
       // Return empty results instead of 500 error
@@ -39,9 +40,9 @@ export default async function handler(
     }
 
     return res.status(200).send(JSON.stringify({ products }));
-  } catch (error: any) {
+  } catch (error) {
     // Log error silently and return empty results instead of 500
-    console.warn('Search products API error (returning empty results):', error?.message || 'Unknown error');
+    console.warn('Search products API error (returning empty results):', error.message);
     return res.status(200).send(JSON.stringify({ products: [] }));
   }
 }

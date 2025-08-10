@@ -24,13 +24,6 @@ import {
   formatStoreSettings,
 } from 'utils/settings';
 import { formatProductImages } from 'lib/utils/products';
-import { 
-  shouldUseFallback, 
-  trackAPIFailure, 
-  resetAPIFailures,
-  fallbackLayoutSettings,
-  fallbackStoreSettings 
-} from 'lib/utils/fallback-data';
 
 const client = getGQLClient();
 
@@ -132,12 +125,6 @@ export const getProductsList = async (
 };
 
 export const getProductListingData = async (): Promise<ProductsLayoutProps> => {
-  // Check if we should use fallback data
-  if (shouldUseFallback()) {
-    console.warn('Using fallback data due to API unavailability');
-    return fallbackLayoutSettings;
-  }
-
   try {
     // Get categories with timeout to prevent 500 errors
     const { categories, settings } = await Promise.race([
@@ -146,9 +133,6 @@ export const getProductListingData = async (): Promise<ProductsLayoutProps> => {
         setTimeout(() => reject(new Error('Categories timeout after 15s')), 15000)
       )
     ]);
-
-    // Success - reset failure tracking
-    resetAPIFailures();
 
     return {
       categories: categories || [],
@@ -161,14 +145,21 @@ export const getProductListingData = async (): Promise<ProductsLayoutProps> => {
       },
       attributeFilters: [],
     };
-  } catch (error: any) {
-    console.warn('Error in getProductListingData:', error?.message);
-    
-    // Track the failure
-    trackAPIFailure();
+  } catch (error) {
+    console.error('Error in getProductListingData, using safe fallback:', error);
     
     // Return safe fallback data to prevent 500 errors
-    return fallbackLayoutSettings;
+    return {
+      categories: [],
+      settings: {
+        showProductsPrice: true,
+        showProductsDescription: true,
+        showFeaturedCategories: false,
+        productsPerRow: 4 as ProductsPerRow,
+        enableQuickAdd: true,
+      },
+      attributeFilters: [],
+    };
   }
 };
 
@@ -178,73 +169,49 @@ export const fetchProductBySlug = async (slug: string) => ({
   slug,
 });
 
+// Remove?
 export const getAllProducts = async (): Promise<{
   products: PurchasableProductData[];
   count: number;
 }> => {
-  // Check if we should use fallback data
-  if (shouldUseFallback()) {
-    console.warn('Using fallback products due to API unavailability');
-    return {
-      products: [],
-      count: 0,
-    };
-  }
+  const { data: storeData } = await client.getStoreSettings();
+  const currencies = storeData.storeSettings?.store?.currencies;
 
-  try {
-    const { data: storeData } = await client.getStoreSettings();
-    const currencies = storeData.storeSettings?.store?.currencies;
+  const allPricesByProduct: Map<string, CurrencyPrice[]> = new Map();
 
-    const allPricesByProduct: Map<string, CurrencyPrice[]> = new Map();
-
-    const currenciesPromises = currencies?.map((currency) => {
-      if (currency?.code) {
-        return client
-          .getProductsPricesInCurrency({ currency: currency.code })
-          .then((res) => {
-            res.data.products?.results?.forEach((product) => {
-              if (product?.id && product?.price && product?.currency) {
-                const newPrices = allPricesByProduct.get(product.id) ?? [];
-                newPrices.push({
-                  price: product.price,
-                  currency: product.currency,
-                });
-                allPricesByProduct.set(product.id, newPrices);
-              }
-            });
+  const currenciesPromises = currencies?.map((currency) => {
+    if (currency?.code) {
+      return client
+        .getProductsPricesInCurrency({ currency: currency.code })
+        .then((res) => {
+          res.data.products?.results?.forEach((product) => {
+            if (product?.id && product?.price && product?.currency) {
+              const newPrices = allPricesByProduct.get(product.id) ?? [];
+              newPrices.push({
+                price: product.price,
+                currency: product.currency,
+              });
+              allPricesByProduct.set(product.id, newPrices);
+            }
           });
-      }
-    });
-
-    if (currenciesPromises?.length) {
-      await Promise.all(currenciesPromises);
+        });
     }
+  });
 
-    const response = await client.getAllProducts();
-    const { products: productsResult } = response.data;
-
-    const productsList = productsResult?.results ?? [];
-
-    const products = mapProducts(denullifyArray(productsList));
-    
-    // Success - reset failure tracking
-    resetAPIFailures();
-    
-    return {
-      products: denullifyArray(products),
-      count: productsResult?.count ?? 0,
-    };
-  } catch (error: any) {
-    console.warn('Error in getAllProducts:', error?.message);
-    
-    // Track the failure
-    trackAPIFailure();
-    
-    return {
-      products: [],
-      count: 0,
-    };
+  if (currenciesPromises?.length) {
+    await Promise.all(currenciesPromises);
   }
+
+  const response = await client.getAllProducts();
+  const { products: productsResult } = response.data;
+
+  const productsList = productsResult?.results ?? [];
+
+  const products = mapProducts(denullifyArray(productsList));
+  return {
+    products: denullifyArray(products),
+    count: productsResult?.count ?? 0,
+  };
 };
 
 // Fallback function for when product data cannot be fetched
@@ -270,11 +237,9 @@ function getFallbackProductData(slug: string): ProductsPageProps {
     productOptions: [],
     purchaseOptions: {},
     productVariants: [],
+    hasQuickAdd: false,
     upSells: [],
-    stockLevel: null,
-    stockPurchasable: true,
-    stockTracking: false,
-    meta: {
+    metaTags: {
       title: 'Product Temporarily Unavailable',
       description: 'This product information is temporarily unavailable.',
     },

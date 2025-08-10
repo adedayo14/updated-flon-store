@@ -178,73 +178,49 @@ export const fetchProductBySlug = async (slug: string) => ({
   slug,
 });
 
+// Remove?
 export const getAllProducts = async (): Promise<{
   products: PurchasableProductData[];
   count: number;
 }> => {
-  // Check if we should use fallback data
-  if (shouldUseFallback()) {
-    console.warn('Using fallback products due to API unavailability');
-    return {
-      products: [],
-      count: 0,
-    };
-  }
+  const { data: storeData } = await client.getStoreSettings();
+  const currencies = storeData.storeSettings?.store?.currencies;
 
-  try {
-    const { data: storeData } = await client.getStoreSettings();
-    const currencies = storeData.storeSettings?.store?.currencies;
+  const allPricesByProduct: Map<string, CurrencyPrice[]> = new Map();
 
-    const allPricesByProduct: Map<string, CurrencyPrice[]> = new Map();
-
-    const currenciesPromises = currencies?.map((currency) => {
-      if (currency?.code) {
-        return client
-          .getProductsPricesInCurrency({ currency: currency.code })
-          .then((res) => {
-            res.data.products?.results?.forEach((product) => {
-              if (product?.id && product?.price && product?.currency) {
-                const newPrices = allPricesByProduct.get(product.id) ?? [];
-                newPrices.push({
-                  price: product.price,
-                  currency: product.currency,
-                });
-                allPricesByProduct.set(product.id, newPrices);
-              }
-            });
+  const currenciesPromises = currencies?.map((currency) => {
+    if (currency?.code) {
+      return client
+        .getProductsPricesInCurrency({ currency: currency.code })
+        .then((res) => {
+          res.data.products?.results?.forEach((product) => {
+            if (product?.id && product?.price && product?.currency) {
+              const newPrices = allPricesByProduct.get(product.id) ?? [];
+              newPrices.push({
+                price: product.price,
+                currency: product.currency,
+              });
+              allPricesByProduct.set(product.id, newPrices);
+            }
           });
-      }
-    });
-
-    if (currenciesPromises?.length) {
-      await Promise.all(currenciesPromises);
+        });
     }
+  });
 
-    const response = await client.getAllProducts();
-    const { products: productsResult } = response.data;
-
-    const productsList = productsResult?.results ?? [];
-
-    const products = mapProducts(denullifyArray(productsList));
-    
-    // Success - reset failure tracking
-    resetAPIFailures();
-    
-    return {
-      products: denullifyArray(products),
-      count: productsResult?.count ?? 0,
-    };
-  } catch (error: any) {
-    console.warn('Error in getAllProducts:', error?.message);
-    
-    // Track the failure
-    trackAPIFailure();
-    
-    return {
-      products: [],
-      count: 0,
-    };
+  if (currenciesPromises?.length) {
+    await Promise.all(currenciesPromises);
   }
+
+  const response = await client.getAllProducts();
+  const { products: productsResult } = response.data;
+
+  const productsList = productsResult?.results ?? [];
+
+  const products = mapProducts(denullifyArray(productsList));
+  return {
+    products: denullifyArray(products),
+    count: productsResult?.count ?? 0,
+  };
 };
 
 // Fallback function for when product data cannot be fetched

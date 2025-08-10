@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import Image from 'next/image';
+import styles from 'styles/subscription.module.css';
 import {
   withAccountLayout,
   withAuthentication,
@@ -486,19 +487,16 @@ const SubscriptionDetailPage: NextPageWithLayout<
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="max-w-6xl mx-auto p-8">
       {/* Header */}
       <div className="mb-12">
         <GhostButton
           elType={BUTTON_TYPE.LINK}
           href="/account/subscriptions"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-black text-sm mb-6 transition-colors">
+          className={`inline-flex items-center gap-2 text-sm mb-6 transition-colors ${styles.tealText}`}>
           <ArrowLeft className="w-4 h-4" />
           <span>{text.backToSubscriptionsLabel}</span>
         </GhostButton>
-        <div className="text-3xl font-bold text-black tracking-tight">
-          FLON.
-        </div>
       </div>
 
       {/* Main Subscription Card */}
@@ -506,7 +504,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
         {/* Header with title and status */}
         <div className="flex justify-between items-start mb-6 gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-black mb-1 tracking-tight">
+            <h1 className={`text-2xl font-semibold mb-1 tracking-tight ${styles.tealText}`}>
               {subscription.name}
             </h1>
           </div>
@@ -524,20 +522,20 @@ const SubscriptionDetailPage: NextPageWithLayout<
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
           {headerLeftColumn.map(([label, value]) => (
             <div key={label} className="flex flex-col">
-              <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">{label}</div>
-              <div className="text-sm font-medium text-black">{value}</div>
+              <div className={`text-xs uppercase tracking-wider mb-1 ${styles.tealText}`}>{label}</div>
+              <div className={`text-sm font-medium ${styles.tealText}`}>{value}</div>
             </div>
           ))}
           <div className="flex flex-col">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total</div>
-            <div className="text-sm font-medium text-black">{subscription.grandTotal}</div>
+            <div className={`text-xs uppercase tracking-wider mb-1 ${styles.tealText}`}>Total</div>
+            <div className={`text-sm font-medium ${styles.tealText}`}>{subscription.grandTotal}</div>
           </div>
         </div>
 
         {/* Billing Cycle */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
           {subscription?.billingScheduleText && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className={`flex items-center gap-2 text-sm ${styles.tealText}`}>
               <svg className="w-4 h-4 opacity-70" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -561,50 +559,73 @@ const SubscriptionDetailPage: NextPageWithLayout<
       )}
 
       {/* Actions Card */}
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-10 text-center mb-8">
-        <h2 className="text-xl font-semibold text-black mb-2 tracking-tight">Manage subscription</h2>
-        <p className="text-sm text-gray-600 mb-8">You&apos;re in control.</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {/* Edit Button */}
-          <button
-            onClick={() => setEditSubscriptionOpen(true)}
-            className="flex flex-col items-center gap-2 p-6 border border-black text-black bg-white rounded-lg
-              transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-black hover:text-white"
-          >
-            <div className="text-sm font-semibold tracking-tight">Edit plan</div>
-            <div className="text-xs opacity-75 text-center leading-tight">
-              Change quantity, frequency, or billing
-            </div>
-          </button>
-
-          {/* Pause/Resume Button */}
-          {status !== SUBSCRIPTION_STATUS.PAUSED ? (
-            <button
-              onClick={() => setPauseSubscriptionOpen(true)}
-              className="flex flex-col items-center gap-2 p-6 border border-amber-600 text-amber-600 bg-white rounded-lg
-                transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-amber-600 hover:text-white"
+      {status === SUBSCRIPTION_STATUS.CANCELED ? (
+        /* Cancelled Subscription Message */
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-10 text-center mb-8">
+          <h2 className={`text-xl font-semibold mb-4 tracking-tight ${styles.tealText}`}>Subscription cancelled</h2>
+          <p className={`text-sm mb-6 ${styles.tealText}`}>
+            This subscription was cancelled on {subscription.dateCreated ? formatDateToLocale(subscription.dateCreated, locale) : 'N/A'} and can&apos;t be restarted.
+          </p>
+          
+          {subscription.orderItems.length > 0 && subscription.orderItems[0].href && (
+            <a 
+              href={subscription.orderItems[0].href}
+              className={`inline-flex items-center gap-2 px-6 py-3 border bg-white rounded-lg text-sm font-semibold tracking-tight
+                transition-all duration-200 transform hover:-translate-y-0.5 ${styles.tealButton}`}
             >
-              <div className="text-sm font-semibold tracking-tight">Pause subscription</div>
-              <div className="text-xs opacity-75 text-center leading-tight">
-                Temporarily stop deliveries
-              </div>
-            </button>
-          ) : (
-            <button
-              onClick={() => setPauseSubscriptionOpen(true)}
-              className="flex flex-col items-center gap-2 p-6 border border-amber-600 text-amber-600 bg-white rounded-lg
-                transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-amber-600 hover:text-white"
-            >
-              <div className="text-sm font-semibold tracking-tight">Resume subscription</div>
-              <div className="text-xs opacity-75 text-center leading-tight">
-                Restart deliveries and billing
-              </div>
-            </button>
+              Start a new subscription
+            </a>
           )}
+        </div>
+      ) : (
+        /* Active/Paused Subscription Management */
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-10 mb-8">
+          <h2 className={`text-xl font-semibold mb-2 tracking-tight text-left ${styles.tealText}`}>Manage subscription</h2>
+          <p className={`text-sm mb-8 text-left ${styles.tealText}`}>You&apos;re in control.</p>
 
-          {/* Cancel Button */}
-          {status !== SUBSCRIPTION_STATUS.CANCELED && (
+          <div className={`grid gap-6 ${
+            status === SUBSCRIPTION_STATUS.PAUSED 
+              ? 'grid-cols-1 sm:grid-cols-3' 
+              : 'grid-cols-1 sm:grid-cols-3'
+          }`}>
+            {/* Edit Button - Always show for active and paused */}
+            <button
+              onClick={() => setEditSubscriptionOpen(true)}
+              className={`flex flex-col items-center gap-2 p-6 border bg-white rounded-lg
+                transition-all duration-200 transform hover:-translate-y-0.5 ${styles.tealButton}`}
+            >
+              <div className="text-sm font-semibold tracking-tight">Edit plan</div>
+              <div className="text-xs opacity-75 text-center leading-tight">
+                Change quantity, frequency, or billing
+              </div>
+            </button>
+
+            {/* Pause/Resume Button - Show Resume for paused, Pause for active */}
+            {status === SUBSCRIPTION_STATUS.PAUSED ? (
+              <button
+                onClick={() => setPauseSubscriptionOpen(true)}
+                className="flex flex-col items-center gap-2 p-6 border border-green-600 text-green-600 bg-white rounded-lg
+                  transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-green-600 hover:text-white"
+              >
+                <div className="text-sm font-semibold tracking-tight">Resume subscription</div>
+                <div className="text-xs opacity-75 text-center leading-tight">
+                  Restart deliveries and billing
+                </div>
+              </button>
+            ) : (
+              <button
+                onClick={() => setPauseSubscriptionOpen(true)}
+                className="flex flex-col items-center gap-2 p-6 border border-amber-600 text-amber-600 bg-white rounded-lg
+                  transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-amber-600 hover:text-white"
+              >
+                <div className="text-sm font-semibold tracking-tight">Pause subscription</div>
+                <div className="text-xs opacity-75 text-center leading-tight">
+                  Temporarily stop deliveries
+                </div>
+              </button>
+            )}
+
+            {/* Cancel Button - Only show for active and paused subscriptions */}
             <button
               onClick={() => setCancelSubscriptionOpen(true)}
               className="flex flex-col items-center gap-2 p-6 border border-red-600 text-red-600 bg-white rounded-lg
@@ -615,20 +636,13 @@ const SubscriptionDetailPage: NextPageWithLayout<
                 End this subscription permanently
               </div>
             </button>
-          )}
+          </div>
         </div>
-
-        <div className="mt-6 p-4 bg-white border border-gray-200 rounded-lg">
-          <p className="text-xs text-gray-600 text-center">
-            Need help? <strong className="text-black">Contact our support team</strong> for
-            assistance with your subscription.
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Product Card */}
       <div className="bg-white border border-gray-200 rounded-xl p-8 mb-8">
-        <h2 className="text-lg font-semibold text-black mb-4 tracking-tight">Your subscription</h2>
+        <h2 className={`text-lg font-semibold mb-4 tracking-tight ${styles.tealText}`}>Your subscription</h2>
         <div className="space-y-4">
           {subscription.orderItems.map((item, index) => (
             <div key={index} className="flex gap-4 items-center py-5 border-b border-gray-100 last:border-b-0">
@@ -648,14 +662,14 @@ const SubscriptionDetailPage: NextPageWithLayout<
                 )}
               </div>
               <div className="flex-1">
-                <div className="text-base font-medium text-black">{item.title}</div>
-                <div className="text-sm text-gray-600">
+                <div className={`text-base font-medium ${styles.tealText}`}>{item.title}</div>
+                <div className={`text-sm ${styles.tealText}`}>
                   {item.options?.join(', ') || `Quantity: ${item.quantity}`}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-base font-semibold text-black">{item.price}</div>
-                <div className="text-xs text-gray-600">{subscription?.billingScheduleText}</div>
+                <div className={`text-base font-semibold ${styles.tealText}`}>{item.price}</div>
+                <div className={`text-xs ${styles.tealText}`}>{subscription?.billingScheduleText}</div>
               </div>
             </div>
           ))}
@@ -664,99 +678,101 @@ const SubscriptionDetailPage: NextPageWithLayout<
 
       {/* Invoice Breakdown Card */}
       <div className="bg-white border border-gray-200 rounded-xl p-8">
-        <h2 className="text-lg font-semibold text-black mb-4 tracking-tight">Invoice breakdown</h2>
+        <h2 className={`text-lg font-semibold mb-4 tracking-tight ${styles.tealText}`}>Invoice breakdown</h2>
         <div className="space-y-3">
           {subscription.summaryRows.map((row, index) => (
             <div key={index} className="flex justify-between items-center py-3 border-b border-gray-100">
-              <div className="text-sm text-gray-600">{row.label}</div>
-              <div className="text-sm font-medium text-black">{row.value}</div>
+              <div className={`text-sm ${styles.tealText}`}>{row.label}</div>
+              <div className={`text-sm font-medium ${styles.tealText}`}>{row.value}</div>
             </div>
           ))}
-          <div className="flex justify-between items-center pt-4 mt-2 border-t border-gray-200">
-            <div className="text-sm font-semibold text-black">{subscription.totalRow.label}</div>
-            <div className="text-sm font-semibold text-black">{subscription.totalRow.value}</div>
+          <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+            <div className={`text-sm font-semibold ${styles.tealText}`}>{subscription.totalRow.label}</div>
+            <div className={`text-sm font-semibold ${styles.tealText}`}>{subscription.totalRow.value}</div>
           </div>
         </div>
       </div>
 
-      {/* Modals for actions */}
-      <EditPlanModal
-        subscription={initialSubscription}
-        currency={subscription.currency ?? ''}
-        firstProducts={firstProducts}
-        title="Edit plan"
-        open={editSubscriptionOpen}
-        onClose={() => setEditSubscriptionOpen(false)}
-        actionButtons={[
-          {
-            label: 'Cancel',
-            onClick: () => setEditSubscriptionOpen(false),
-            style: BUTTON_STYLE.SECONDARY,
-          },
-          {
-            label: 'Save',
-            onClick: () => setEditSubscriptionOpen(false),
-            style: BUTTON_STYLE.PRIMARY,
-          },
-        ]}
-      />
-
-      {status !== SUBSCRIPTION_STATUS.PAUSED ? (
-        <PauseSubscriptionModal
-          interval={subscription?.billingSchedule?.intervalCount ?? 0}
-          nextBillingDate={subscription?.datePeriodEnd}
-          subscriptionId={subscription?.id ?? ''}
-          title={text.pause.dialogTitle}
-          open={pauseSubscriptionOpen}
-          onClose={() => setPauseSubscriptionOpen(false)}
-          actionButtons={[
-            {
-              label: text.pause.buttonLabel,
-              onClick: () => setPauseSubscriptionOpen(false),
-              style: BUTTON_STYLE.SECONDARY,
-            },
-          ]}
-        />
-      ) : (
-        <ActionModal
-          title={text.resume.dialogTitle}
-          body={text.resume.dialogBody}
-          open={pauseSubscriptionOpen}
-          onClose={() => setPauseSubscriptionOpen(false)}
-          actionButtons={[
-            {
-              label: text.resume.subscriptionButtonLabel,
-              onClick: () => pauseSubscription(false),
-              style: BUTTON_STYLE.DANGER,
-            },
-            {
-              label: text.resume.buttonLabel,
-              onClick: () => setPauseSubscriptionOpen(false),
-              style: BUTTON_STYLE.SECONDARY,
-            },
-          ]}
-        />
-      )}
-
+      {/* Modals for actions - Only show for non-cancelled subscriptions */}
       {status !== SUBSCRIPTION_STATUS.CANCELED && (
-        <ActionModal
-          title={text.cancel.dialogTitle}
-          body={text.cancel.dialogBody}
-          open={cancelSubscriptionOpen}
-          onClose={() => setCancelSubscriptionOpen(false)}
-          actionButtons={[
-            {
-              label: text.cancel.subscriptionButtonLabel,
-              onClick: cancelSubscription,
-              style: BUTTON_STYLE.DANGER,
-            },
-            {
-              label: text.cancel.buttonLabel,
-              onClick: () => setCancelSubscriptionOpen(false),
-              style: BUTTON_STYLE.SECONDARY,
-            },
-          ]}
-        />
+        <>
+          <EditPlanModal
+            subscription={initialSubscription}
+            currency={subscription.currency ?? ''}
+            firstProducts={firstProducts}
+            title="Edit plan"
+            open={editSubscriptionOpen}
+            onClose={() => setEditSubscriptionOpen(false)}
+            actionButtons={[
+              {
+                label: 'Cancel',
+                onClick: () => setEditSubscriptionOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+              {
+                label: 'Save',
+                onClick: () => setEditSubscriptionOpen(false),
+                style: BUTTON_STYLE.PRIMARY,
+              },
+            ]}
+          />
+
+          {status === SUBSCRIPTION_STATUS.PAUSED ? (
+            <ActionModal
+              title={text.resume.dialogTitle}
+              body={text.resume.dialogBody}
+              open={pauseSubscriptionOpen}
+              onClose={() => setPauseSubscriptionOpen(false)}
+              actionButtons={[
+                {
+                  label: text.resume.subscriptionButtonLabel,
+                  onClick: () => pauseSubscription(false),
+                  style: BUTTON_STYLE.DANGER,
+                },
+                {
+                  label: text.resume.buttonLabel,
+                  onClick: () => setPauseSubscriptionOpen(false),
+                  style: BUTTON_STYLE.SECONDARY,
+                },
+              ]}
+            />
+          ) : (
+            <PauseSubscriptionModal
+              interval={subscription?.billingSchedule?.intervalCount ?? 0}
+              nextBillingDate={subscription?.datePeriodEnd}
+              subscriptionId={subscription?.id ?? ''}
+              title={text.pause.dialogTitle}
+              open={pauseSubscriptionOpen}
+              onClose={() => setPauseSubscriptionOpen(false)}
+              actionButtons={[
+                {
+                  label: text.pause.buttonLabel,
+                  onClick: () => setPauseSubscriptionOpen(false),
+                  style: BUTTON_STYLE.SECONDARY,
+                },
+              ]}
+            />
+          )}
+
+          <ActionModal
+            title={text.cancel.dialogTitle}
+            body={text.cancel.dialogBody}
+            open={cancelSubscriptionOpen}
+            onClose={() => setCancelSubscriptionOpen(false)}
+            actionButtons={[
+              {
+                label: text.cancel.subscriptionButtonLabel,
+                onClick: cancelSubscription,
+                style: BUTTON_STYLE.DANGER,
+              },
+              {
+                label: text.cancel.buttonLabel,
+                onClick: () => setCancelSubscriptionOpen(false),
+                style: BUTTON_STYLE.SECONDARY,
+              },
+            ]}
+          />
+        </>
       )}
 
       {showInvoiceBtn && subscription.id && subscription.currency && (

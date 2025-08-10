@@ -436,7 +436,7 @@ export async function getProductBySlug(
   };
   } catch (error: any) {
     console.warn(`Error fetching product ${slug}, using fallback: ${error?.message || 'Unknown error'}`);
-    trackAPIFailure();
+    trackAPIFailure('product-fetch');
     return getFallbackProductData(slug);
   }
 }

@@ -37,51 +37,56 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
   const hasReturn = returnLabel && returnDialogTitle && returnDialogBody;
 
   return (
-    <header className={['flex flex-col space-y-4', className ?? ''].join(' ')}>
-      <div className="flex flex-col items-center md:flex-row md:justify-between">
-        <div className="flex w-full items-center justify-between md:justify-start">
-          <h1 className="font-headings text-2xl font-semibold text-primary md:mr-4">
+    <header className={['bg-white border border-gray-200 rounded-xl p-8 mb-8', className ?? ''].join(' ')}>
+      {/* Header with title and status */}
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1">
             {title}
           </h1>
-          <StatusIndicator
-            status={status}
-            type={isSubscription ? 'subscription' : 'order'}
+        </div>
+        <StatusIndicator
+          status={status}
+          type={isSubscription ? 'subscription' : 'order'}
+        />
+      </div>
+
+      {/* Meta Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+        {leftColumn.map(([text, value]) => (
+          <div key={`${text}${value}`}>
+            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">{text}</div>
+            <div className="text-sm font-medium text-gray-900">{value}</div>
+          </div>
+        ))}
+        <div>
+          <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">{totalText}</div>
+          <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+            {isSubscription && <Sync className="w-4 h-4 opacity-70" />}
+            {total}
+          </div>
+        </div>
+      </div>
+
+      {/* Return button if available */}
+      {hasReturn && (
+        <div className="flex justify-end border-t border-gray-200 pt-4">
+          <Button
+            elType={BUTTON_TYPE.BUTTON}
+            onClick={() => setReturnOpen(true)}
+            buttonStyle={BUTTON_STYLE.SECONDARY}
+            small
+            className="whitespace-nowrap">
+            {returnLabel}
+          </Button>
+          <Modal
+            title={returnDialogTitle}
+            body={returnDialogBody}
+            open={returnOpen}
+            onClose={() => setReturnOpen(false)}
           />
         </div>
-        {hasReturn && (
-          <>
-            <Button
-              elType={BUTTON_TYPE.BUTTON}
-              onClick={() => setReturnOpen(true)}
-              buttonStyle={BUTTON_STYLE.SECONDARY}
-              small
-              className="mt-4 w-full whitespace-nowrap text-center md:mt-0 md:w-auto">
-              {returnLabel}
-            </Button>
-            <Modal
-              title={returnDialogTitle}
-              body={returnDialogBody}
-              open={returnOpen}
-              onClose={() => setReturnOpen(false)}
-            />
-          </>
-        )}
-      </div>
-      <div className="flex w-full flex-col items-start md:flex-row md:justify-between">
-        <ul className="flex flex-col space-y-1">
-          {leftColumn.map(([text, value]) => (
-            <li key={`${text}${value}`} className="text-sm">
-              <span className="text-body">{text}</span>
-              <strong className="ml-2 text-primary">{value}</strong>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-1 flex items-center space-x-2 text-sm md:mt-0">
-          {isSubscription && <Sync className="w-[22px]" />}
-          <span className="text-body">{totalText}</span>
-          <strong className="text-primary">{total}</strong>
-        </p>
-      </div>
+      )}
     </header>
   );
 };

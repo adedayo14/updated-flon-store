@@ -36,7 +36,7 @@ const PurchaseList: React.FC<PurchaseListProps> = ({
 
   return (
     <article className="">
-      <h1 className="hidden font-headings text-2xl font-semibold text-primary lg:block">
+      <h1 className="hidden font-headings text-2xl font-semibold text-teal-600 lg:block">
         {title}
       </h1>
       {hasPurchases ? (

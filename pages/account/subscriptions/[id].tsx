@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import Image from 'next/image';
 import {
   withAccountLayout,
   withAuthentication,
@@ -8,19 +9,12 @@ import type { GetServerSideProps } from 'next';
 import type { NextPageWithLayout, PageProps } from 'types/shared/pages';
 import type {
   SwellSubscription,
-  SwellSubscriptionItem,
 } from 'lib/graphql/generated/sdk';
-import OrderHeader from 'components/molecules/OrderHeader';
-import OrderItemsTable from 'components/molecules/OrderItemsTable';
-import InvoiceItemsTable from 'components/molecules/InvoiceItemsTable';
-import OrderSummary from 'components/molecules/OrderSummary';
-import OrderInfo from 'components/molecules/OrderInfo';
 import { CARD_BRAND, PAYMENT_METHOD } from 'types/shared/payment';
 import GhostButton from 'components/atoms/GhostButton';
 import { BUTTON_STYLE, BUTTON_TYPE } from 'types/shared/button';
 import ArrowLeft from 'assets/icons/arrow-left.svg';
 import { SUBSCRIPTION_STATUS } from 'types/subscription';
-import Button from 'components/atoms/Button';
 import ActionModal from 'components/molecules/ActionModal';
 import PauseSubscriptionModal from 'components/molecules/PauseSubscriptionModal';
 import AddInvoiceItemModal from 'components/molecules/AddInvoiceItemModal';
@@ -492,226 +486,302 @@ const SubscriptionDetailPage: NextPageWithLayout<
   );
 
   return (
-    <article className="max-w-5xl">
-      <GhostButton
-        elType={BUTTON_TYPE.LINK}
-        href="/account/subscriptions"
-        className="space-x-1.5">
-        <ArrowLeft className="w-[16.6px]" />
-        <span>{text.backToSubscriptionsLabel}</span>
-      </GhostButton>
-      <OrderHeader
-        title={subscription.name}
-        status={status}
-        totalText={subscription?.billingScheduleText ?? ''}
-        total={subscription.grandTotal}
-        leftColumn={headerLeftColumn}
-        isSubscription
-        className="mt-10"
-      />
-      {subscription?.notificationText && (
-        <BannerInfo textAlignment={TEXT_ALIGNMENT.CENTER} className="mt-6">
-          {subscription.notificationText}
-        </BannerInfo>
-      )}
-      <OrderItemsTable
-        orderItems={subscription.orderItems}
-        quantityText={text.quantityLabel}
-        priceText={text.priceLabel}
-        itemsText={text.itemsLabel}
-        className="mt-8"
-      />
-      {subscription.id && subscription.invoiceItems && (
-        <InvoiceItemsTable
-          subscription={subscription.id}
-          invoiceItems={subscription.invoiceItems.filter(
-            (item): item is SwellSubscriptionItem => item !== null,
+    <div className="max-w-4xl mx-auto p-8">
+      {/* Header */}
+      <div className="mb-12">
+        <GhostButton
+          elType={BUTTON_TYPE.LINK}
+          href="/account/subscriptions"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-black text-sm mb-6 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          <span>{text.backToSubscriptionsLabel}</span>
+        </GhostButton>
+        <div className="text-3xl font-bold text-black tracking-tight">
+          FLON.
+        </div>
+      </div>
+
+      {/* Main Subscription Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-8 mb-8">
+        {/* Header with title and status */}
+        <div className="flex justify-between items-start mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-black mb-1 tracking-tight">
+              {subscription.name}
+            </h1>
+          </div>
+          <span className={`px-2 py-1 rounded-md text-xs font-medium uppercase tracking-wider whitespace-nowrap ${
+            status === SUBSCRIPTION_STATUS.ACTIVE ? 'bg-green-100 text-green-800' :
+            status === SUBSCRIPTION_STATUS.PAUSED ? 'bg-yellow-100 text-yellow-800' :
+            status === SUBSCRIPTION_STATUS.CANCELED ? 'bg-gray-100 text-gray-800' :
+            'bg-red-100 text-red-800'
+          }`}>
+            {status}
+          </span>
+        </div>
+
+        {/* Meta Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+          {headerLeftColumn.map(([label, value]) => (
+            <div key={label} className="flex flex-col">
+              <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">{label}</div>
+              <div className="text-sm font-medium text-black">{value}</div>
+            </div>
+          ))}
+          <div className="flex flex-col">
+            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total</div>
+            <div className="text-sm font-medium text-black">{subscription.grandTotal}</div>
+          </div>
+        </div>
+
+        {/* Billing Cycle */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          {subscription?.billingScheduleText && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <svg className="w-4 h-4 opacity-70" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {subscription.billingScheduleText}
+            </div>
           )}
-          quantityText={text.quantityLabel}
-          priceText={text.priceLabel}
-          itemsText="Invoice items"
-          className="mt-8"
+        </div>
+      </div>
+
+      {/* Notification Banner */}
+      {subscription?.notificationText && (
+        <div className="mb-8">
+          <BannerInfo textAlignment={TEXT_ALIGNMENT.CENTER}>
+            {subscription.notificationText}
+          </BannerInfo>
+        </div>
+      )}
+
+      {/* Actions Card */}
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-10 text-center mb-8">
+        <h2 className="text-xl font-semibold text-black mb-2 tracking-tight">Manage subscription</h2>
+        <p className="text-sm text-gray-600 mb-8">You&apos;re in control.</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {/* Edit Button */}
+          <button
+            onClick={() => setEditSubscriptionOpen(true)}
+            className="flex flex-col items-center gap-2 p-6 border border-black text-black bg-white rounded-lg
+              transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-black hover:text-white"
+          >
+            <div className="text-sm font-semibold tracking-tight">Edit plan</div>
+            <div className="text-xs opacity-75 text-center leading-tight">
+              Change quantity, frequency, or billing
+            </div>
+          </button>
+
+          {/* Pause/Resume Button */}
+          {status !== SUBSCRIPTION_STATUS.PAUSED ? (
+            <button
+              onClick={() => setPauseSubscriptionOpen(true)}
+              className="flex flex-col items-center gap-2 p-6 border border-amber-600 text-amber-600 bg-white rounded-lg
+                transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-amber-600 hover:text-white"
+            >
+              <div className="text-sm font-semibold tracking-tight">Pause subscription</div>
+              <div className="text-xs opacity-75 text-center leading-tight">
+                Temporarily stop deliveries
+              </div>
+            </button>
+          ) : (
+            <button
+              onClick={() => setPauseSubscriptionOpen(true)}
+              className="flex flex-col items-center gap-2 p-6 border border-amber-600 text-amber-600 bg-white rounded-lg
+                transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-amber-600 hover:text-white"
+            >
+              <div className="text-sm font-semibold tracking-tight">Resume subscription</div>
+              <div className="text-xs opacity-75 text-center leading-tight">
+                Restart deliveries and billing
+              </div>
+            </button>
+          )}
+
+          {/* Cancel Button */}
+          {status !== SUBSCRIPTION_STATUS.CANCELED && (
+            <button
+              onClick={() => setCancelSubscriptionOpen(true)}
+              className="flex flex-col items-center gap-2 p-6 border border-red-600 text-red-600 bg-white rounded-lg
+                transition-all duration-200 transform hover:-translate-y-0.5 hover:bg-red-600 hover:text-white"
+            >
+              <div className="text-sm font-semibold tracking-tight">Cancel subscription</div>
+              <div className="text-xs opacity-75 text-center leading-tight">
+                End this subscription permanently
+              </div>
+            </button>
+          )}
+        </div>
+
+        <div className="mt-6 p-4 bg-white border border-gray-200 rounded-lg">
+          <p className="text-xs text-gray-600 text-center">
+            Need help? <strong className="text-black">Contact our support team</strong> for
+            assistance with your subscription.
+          </p>
+        </div>
+      </div>
+
+      {/* Product Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-8 mb-8">
+        <h2 className="text-lg font-semibold text-black mb-4 tracking-tight">Your subscription</h2>
+        <div className="space-y-4">
+          {subscription.orderItems.map((item, index) => (
+            <div key={index} className="flex gap-4 items-center py-5 border-b border-gray-100 last:border-b-0">
+              <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+                {item.image?.src ? (
+                  <Image
+                    src={item.image.src}
+                    alt={item.image.alt || item.title}
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                    No Image
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="text-base font-medium text-black">{item.title}</div>
+                <div className="text-sm text-gray-600">
+                  {item.options?.join(', ') || `Quantity: ${item.quantity}`}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-base font-semibold text-black">{item.price}</div>
+                <div className="text-xs text-gray-600">{subscription?.billingScheduleText}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Invoice Breakdown Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-8">
+        <h2 className="text-lg font-semibold text-black mb-4 tracking-tight">Invoice breakdown</h2>
+        <div className="space-y-3">
+          {subscription.summaryRows.map((row, index) => (
+            <div key={index} className="flex justify-between items-center py-3 border-b border-gray-100">
+              <div className="text-sm text-gray-600">{row.label}</div>
+              <div className="text-sm font-medium text-black">{row.value}</div>
+            </div>
+          ))}
+          <div className="flex justify-between items-center pt-4 mt-2 border-t border-gray-200">
+            <div className="text-sm font-semibold text-black">{subscription.totalRow.label}</div>
+            <div className="text-sm font-semibold text-black">{subscription.totalRow.value}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modals for actions */}
+      <EditPlanModal
+        subscription={initialSubscription}
+        currency={subscription.currency ?? ''}
+        firstProducts={firstProducts}
+        title="Edit plan"
+        open={editSubscriptionOpen}
+        onClose={() => setEditSubscriptionOpen(false)}
+        actionButtons={[
+          {
+            label: 'Cancel',
+            onClick: () => setEditSubscriptionOpen(false),
+            style: BUTTON_STYLE.SECONDARY,
+          },
+          {
+            label: 'Save',
+            onClick: () => setEditSubscriptionOpen(false),
+            style: BUTTON_STYLE.PRIMARY,
+          },
+        ]}
+      />
+
+      {status !== SUBSCRIPTION_STATUS.PAUSED ? (
+        <PauseSubscriptionModal
+          interval={subscription?.billingSchedule?.intervalCount ?? 0}
+          nextBillingDate={subscription?.datePeriodEnd}
+          subscriptionId={subscription?.id ?? ''}
+          title={text.pause.dialogTitle}
+          open={pauseSubscriptionOpen}
+          onClose={() => setPauseSubscriptionOpen(false)}
+          actionButtons={[
+            {
+              label: text.pause.buttonLabel,
+              onClick: () => setPauseSubscriptionOpen(false),
+              style: BUTTON_STYLE.SECONDARY,
+            },
+          ]}
+        />
+      ) : (
+        <ActionModal
+          title={text.resume.dialogTitle}
+          body={text.resume.dialogBody}
+          open={pauseSubscriptionOpen}
+          onClose={() => setPauseSubscriptionOpen(false)}
+          actionButtons={[
+            {
+              label: text.resume.subscriptionButtonLabel,
+              onClick: () => pauseSubscription(false),
+              style: BUTTON_STYLE.DANGER,
+            },
+            {
+              label: text.resume.buttonLabel,
+              onClick: () => setPauseSubscriptionOpen(false),
+              style: BUTTON_STYLE.SECONDARY,
+            },
+          ]}
         />
       )}
-      <OrderSummary
-        rows={subscription.summaryRows}
-        totalRow={subscription.totalRow}
-        subscriptionSchedule={subscription.subscriptionSchedule}
-        nextBillingDate={subscription.datePeriodEnd}
-        nextOrderDate={subscription.dateOrderPeriodEnd}
-        billingLimitText={subscription.billingLimitText}
-        orderLimitText={subscription.orderLimitText}
-        className="mt-8"
-      />
-      <OrderInfo
-        title={text.deliveryInfoTitle}
-        infoCards={subscription.shippingInfo}
-        className="border-b-outline mt-10 border-b pb-10"
-      />
-      <OrderInfo
-        title={text.paymentInfoTitle}
-        infoCards={subscription.billingInfo}
-        className="border-b-outline mt-10 border-b pb-10"
-      />
-      <div className="flex gap-x-2">
-        <div className="mt-10 flex flex-col space-y-6">
-          <Button
-            elType={BUTTON_TYPE.BUTTON}
-            small
-            className="w-full md:w-fit"
-            onClick={() => setEditSubscriptionOpen(true)}
-            buttonStyle={BUTTON_STYLE.SECONDARY}>
-            {text.edit.label}
-          </Button>
-          <EditPlanModal
-            subscription={initialSubscription}
-            currency={subscription.currency ?? ''}
-            firstProducts={firstProducts}
-            title="Edit plan"
-            open={editSubscriptionOpen}
-            onClose={() => setEditSubscriptionOpen(false)}
-            actionButtons={[
-              {
-                label: 'Cancel',
-                onClick: () => setEditSubscriptionOpen(false),
-                style: BUTTON_STYLE.SECONDARY,
-              },
-              {
-                label: 'Save',
-                onClick: cancelSubscription,
-                style: BUTTON_STYLE.PRIMARY,
-              },
-            ]}
-          />
-        </div>
-        {showInvoiceBtn && (
-          <div className="mt-10 flex flex-col space-y-6">
-            <Button
-              elType={BUTTON_TYPE.BUTTON}
-              small
-              className="w-full md:w-fit"
-              onClick={() => setAddInvoiceOpen(true)}
-              buttonStyle={BUTTON_STYLE.SECONDARY}>
-              Add Invoice
-            </Button>
-            {subscription.id && subscription.currency && (
-              <AddInvoiceItemModal
-                subscription={subscription.id}
-                currency={subscription.currency}
-                firstProducts={firstProducts}
-                title="Add item"
-                open={addInvoiceOpen}
-                onClose={() => setAddInvoiceOpen(false)}
-                actionButtons={[
-                  {
-                    label: 'Cancel',
-                    onClick: () => setAddInvoiceOpen(false),
-                    style: BUTTON_STYLE.SECONDARY,
-                  },
-                  {
-                    label: 'Save',
-                    onClick: cancelSubscription,
-                    style: BUTTON_STYLE.PRIMARY,
-                  },
-                ]}
-              />
-            )}
-          </div>
-        )}
-        {status !== SUBSCRIPTION_STATUS.PAUSED && (
-          <div className="mt-10 flex flex-col space-y-6">
-            <Button
-              elType={BUTTON_TYPE.BUTTON}
-              small
-              className="w-full md:w-fit"
-              onClick={() => setPauseSubscriptionOpen(true)}
-              buttonStyle={BUTTON_STYLE.SECONDARY}>
-              Pause
-            </Button>
-            <PauseSubscriptionModal
-              interval={subscription?.billingSchedule?.intervalCount ?? 0}
-              nextBillingDate={subscription?.datePeriodEnd}
-              subscriptionId={subscription?.id ?? ''}
-              title={text.pause.dialogTitle}
-              open={pauseSubscriptionOpen}
-              onClose={() => setPauseSubscriptionOpen(false)}
-              actionButtons={[
-                // {
-                //   label: text.pause.subscriptionButtonLabel,
-                //   onClick: () => pauseSubscription(true),
-                //   style: BUTTON_STYLE.DANGER,
-                // },
-                {
-                  label: text.pause.buttonLabel,
-                  onClick: () => setPauseSubscriptionOpen(false),
-                  style: BUTTON_STYLE.SECONDARY,
-                },
-              ]}
-            />
-          </div>
-        )}
-        {status == SUBSCRIPTION_STATUS.PAUSED && (
-          <div className="mt-10 flex flex-col space-y-6">
-            <Button
-              elType={BUTTON_TYPE.BUTTON}
-              small
-              className="w-full md:w-fit"
-              onClick={() => setPauseSubscriptionOpen(true)}
-              buttonStyle={BUTTON_STYLE.SECONDARY}>
-              Resume
-            </Button>
-            <ActionModal
-              title={text.resume.dialogTitle}
-              body={text.resume.dialogBody}
-              open={pauseSubscriptionOpen}
-              onClose={() => setPauseSubscriptionOpen(false)}
-              actionButtons={[
-                {
-                  label: text.resume.subscriptionButtonLabel,
-                  onClick: () => pauseSubscription(false),
-                  style: BUTTON_STYLE.DANGER,
-                },
-                {
-                  label: text.resume.buttonLabel,
-                  onClick: () => setPauseSubscriptionOpen(false),
-                  style: BUTTON_STYLE.SECONDARY,
-                },
-              ]}
-            />
-          </div>
-        )}
-        {status !== SUBSCRIPTION_STATUS.CANCELED && (
-          <div className="mt-10 flex flex-col space-y-6">
-            <Button
-              elType={BUTTON_TYPE.BUTTON}
-              small
-              className="w-full md:w-fit"
-              onClick={() => setCancelSubscriptionOpen(true)}
-              buttonStyle={BUTTON_STYLE.SECONDARY}>
-              Cancel
-            </Button>
-            <ActionModal
-              title={text.cancel.dialogTitle}
-              body={text.cancel.dialogBody}
-              open={cancelSubscriptionOpen}
-              onClose={() => setCancelSubscriptionOpen(false)}
-              actionButtons={[
-                {
-                  label: text.cancel.subscriptionButtonLabel,
-                  onClick: cancelSubscription,
-                  style: BUTTON_STYLE.DANGER,
-                },
-                {
-                  label: text.cancel.buttonLabel,
-                  onClick: () => setCancelSubscriptionOpen(false),
-                  style: BUTTON_STYLE.SECONDARY,
-                },
-              ]}
-            />
-          </div>
-        )}
-      </div>
-    </article>
+
+      {status !== SUBSCRIPTION_STATUS.CANCELED && (
+        <ActionModal
+          title={text.cancel.dialogTitle}
+          body={text.cancel.dialogBody}
+          open={cancelSubscriptionOpen}
+          onClose={() => setCancelSubscriptionOpen(false)}
+          actionButtons={[
+            {
+              label: text.cancel.subscriptionButtonLabel,
+              onClick: cancelSubscription,
+              style: BUTTON_STYLE.DANGER,
+            },
+            {
+              label: text.cancel.buttonLabel,
+              onClick: () => setCancelSubscriptionOpen(false),
+              style: BUTTON_STYLE.SECONDARY,
+            },
+          ]}
+        />
+      )}
+
+      {showInvoiceBtn && subscription.id && subscription.currency && (
+        <AddInvoiceItemModal
+          subscription={subscription.id}
+          currency={subscription.currency}
+          firstProducts={firstProducts}
+          title="Add item"
+          open={addInvoiceOpen}
+          onClose={() => setAddInvoiceOpen(false)}
+          actionButtons={[
+            {
+              label: 'Cancel',
+              onClick: () => setAddInvoiceOpen(false),
+              style: BUTTON_STYLE.SECONDARY,
+            },
+            {
+              label: 'Save',
+              onClick: cancelSubscription,
+              style: BUTTON_STYLE.PRIMARY,
+            },
+          ]}
+        />
+      )}
+    </div>
   );
 };
 

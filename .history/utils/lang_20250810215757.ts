@@ -1,4 +1,4 @@
- import type { AccountNavLinkProps } from 'components/atoms/AccountNavLink';
+import type { AccountNavLinkProps } from 'components/atoms/AccountNavLink';
 import type { I18n } from 'hooks/useI18n';
 
 export const pageTitleMap = (i18n: I18n) => ({

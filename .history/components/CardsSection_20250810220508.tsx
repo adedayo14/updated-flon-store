@@ -3,57 +3,54 @@ import { BUTTON_TYPE, BUTTON_STYLE } from 'types/shared/button';
 import Button from './atoms/Button';
 import useNotificationStore from 'stores/notification';
 import { NOTIFICATION_TYPE } from 'types/shared/notification';
-import { useAddressContext } from 'utils/contexts/addressContext';
-import { useRouter } from 'next/router';
-import type { SpecialAddress } from 'pages/account/addresses';
+// import { useRouter } from 'next/router';
+import type { SpecialCard } from 'pages/account/cards';
+import { useCardContext } from 'utils/contexts/cardContext';
 import { API_BASE_URL } from 'config';
 
-interface AddressProps {
-  address: SpecialAddress;
+interface CardProps {
+  card: SpecialCard;
 }
 
-const AddressCard: React.FC<AddressProps> = ({ address }) => {
+const Card: React.FC<CardProps> = ({ card }) => {
   const send = useNotificationStore((store) => store.send);
-  const { addresses, setAddresses } = useAddressContext();
+  const { cards, setCards } = useCardContext();
 
   const handleDelete = async (id: string | undefined) => {
     try {
       if (!id) {
         send({
-          message: 'Address ID is missing',
+          message: 'Card ID is missing',
           type: NOTIFICATION_TYPE.ERROR,
         });
         return;
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/swell/addresses/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`${API_BASE_URL}/api/swell/cards/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         send({
-          message: 'Address deleted successfully',
+          message: 'Card deleted successfully',
           type: NOTIFICATION_TYPE.SUCCESS,
         });
-        // Remove the deleted address from the addresses array
-        const updatedAddresses = addresses.filter((addr) => addr.id !== id);
-        setAddresses(updatedAddresses); // Update the context with the updated addresses array
+
+        const updatedCards = cards.filter((card) => card.id !== id);
+        setCards(updatedCards); // Update the context with the updated cards array
       } else {
         send({
-          message: 'Failed to delete address',
+          message: 'Failed to delete card',
           type: NOTIFICATION_TYPE.ERROR,
         });
-        console.error('Failed to delete address');
+        console.error('Failed to delete card');
       }
     } catch (error) {
       send({
-        message: 'Error deleting address',
+        message: 'Error deleting card',
         type: NOTIFICATION_TYPE.ERROR,
       });
     }
@@ -63,14 +60,14 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
     try {
       if (!id) {
         send({
-          message: 'Address ID is missing',
+          message: 'Card ID is missing',
           type: NOTIFICATION_TYPE.ERROR,
         });
         return;
       }
 
       const response = await fetch(
-        `${API_BASE_URL}/api/swell/addresses/${id}/default`,
+        `${API_BASE_URL}/api/swell/cards/${id}/default`,
         {
           method: 'PUT',
           headers: {
@@ -81,60 +78,59 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
 
       if (response.ok) {
         send({
-          message: 'Saved. This is now your default address.',
+          message: 'Saved. This is now your default card.',
           type: NOTIFICATION_TYPE.SUCCESS,
         });
-        // Update addresses to reflect new default
-        const updatedAddresses = addresses.map((addr) => ({
-          ...addr,
-          default: addr.id === id,
+        // Update cards to reflect new default
+        const updatedCards = cards.map((c) => ({
+          ...c,
+          default: c.id === id,
         }));
-        setAddresses(updatedAddresses);
+        setCards(updatedCards);
       } else {
         send({
-          message: 'Failed to set as default address',
+          message: 'Failed to set as default card',
           type: NOTIFICATION_TYPE.ERROR,
         });
       }
     } catch (error) {
       send({
-        message: 'Error setting default address',
+        message: 'Error setting default card',
         type: NOTIFICATION_TYPE.ERROR,
       });
     }
   };
 
-  const router = useRouter();
-  const currentRoute = router.pathname;
-
   return (
     <div className="space-y-12 md:mt-12">
       <div 
         className={`border-outline relative rounded-xl border bg-background-primary p-6 ${
-          address.default ? 'border-l-4 border-l-teal-500 bg-teal-50/30' : ''
+          card.default ? 'border-l-4 border-l-teal-500 bg-teal-50/30' : ''
         }`}
         role="article"
-        aria-label={address.default ? "Default address" : "Address"}
+        aria-label={card.default ? "Default card" : "Payment card"}
       >
-        {/* Header with name and default badge */}
+        {/* Header with card info and default badge */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             {/* Mobile: checkmark at far left */}
-            {address.default && (
+            {card.default && (
               <div className="flex md:hidden">
                 <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
             )}
-            <div className="text-lg font-semibold text-body">{address.name}</div>
+            <div className="text-lg font-semibold text-body">
+              {card.brand} ending in {card.last4}
+            </div>
           </div>
           
           {/* Default badge - desktop/tablet */}
-          {address.default && (
+          {card.default && (
             <span 
               className="hidden md:flex items-center text-teal-700 bg-teal-100 rounded-full px-3 py-1 text-sm font-medium"
-              aria-label="Default address"
+              aria-label="Default card"
             >
               <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -144,30 +140,12 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
           )}
         </div>
 
-        {/* Address details */}
-        <div className="space-y-1 mb-6">
-          <div className="text-md text-body">{address.address1}</div>
-          {address.address2 && (
-            <div className="text-md text-body">{address.address2}</div>
-          )}
-          <div className="text-md text-body">
-            {address.city}, {address.state} {address.zip}
-          </div>
-          <div className="text-md text-body">{address.country}</div>
-          {address.phone && (
-            <div className="text-md text-body">Phone: {address.phone}</div>
-          )}
-          {address.company && (
-            <div className="text-md text-body">Company: {address.company}</div>
-          )}
-        </div>
-
         {/* Mobile: Default badge */}
-        {address.default && (
+        {card.default && (
           <div className="flex md:hidden mb-4">
             <span 
               className="flex items-center text-teal-700 bg-teal-100 rounded-full px-3 py-1 text-sm font-medium"
-              aria-label="Default address"
+              aria-label="Default card"
             >
               <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -179,10 +157,10 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          {/* Set as default link for non-default addresses */}
-          {!address.default && (
+          {/* Set as default link for non-default cards */}
+          {!card.default && (
             <button
-              onClick={() => handleSetAsDefault(address.id)}
+              onClick={() => handleSetAsDefault(card.id)}
               className="text-teal-600 hover:text-teal-700 text-sm font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded"
               aria-pressed="false"
             >
@@ -190,21 +168,11 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
             </button>
           )}
           
-          {/* Edit and Delete buttons */}
+          {/* Delete button */}
           <div className="flex gap-2 sm:ml-auto">
             <Button
-              elType={BUTTON_TYPE.LINK}
-              href={`${currentRoute}/edit?id=${address.id}&isDefault=${address.default}`}
-              onClick={() => null}
-              buttonStyle={BUTTON_STYLE.SECONDARY}
-              small
-              className="whitespace-nowrap focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-            >
-              Edit
-            </Button>
-            <Button
               elType={BUTTON_TYPE.BUTTON}
-              onClick={() => handleDelete(address.id)}
+              onClick={() => handleDelete(card.id)}
               buttonStyle={BUTTON_STYLE.SECONDARY}
               small
               className="whitespace-nowrap focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
@@ -218,23 +186,15 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
   );
 };
 
-const AddressesSection: React.FC = () => {
-  const { addresses } = useAddressContext();
-  
-  // Sort addresses to put default first
-  const sortedAddresses = [...addresses].sort((a, b) => {
-    if (a.default && !b.default) return -1;
-    if (!a.default && b.default) return 1;
-    return 0;
-  });
-  
+const CardsSection: React.FC = () => {
+  const { cards } = useCardContext();
   return (
     <div className="mt-8">
-      {sortedAddresses.map((address) => (
-        <AddressCard key={address.id} address={address} />
+      {cards.map((card) => (
+        <Card key={card.id} card={card} />
       ))}
     </div>
   );
 };
 
-export default AddressesSection;
+export default CardsSection;

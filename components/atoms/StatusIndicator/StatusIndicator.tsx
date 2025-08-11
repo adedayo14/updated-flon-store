@@ -74,7 +74,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   };
 
   return (
-    <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium shadow-sm border ${getPillStyling()}`}>
+    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium shadow-sm border ${getPillStyling()}`}>
       {template?.label}
       {!!template?.details && (
         <>

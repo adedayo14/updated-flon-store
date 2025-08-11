@@ -108,10 +108,12 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
   const currentRoute = router.pathname;
 
   return (
-    <div className="space-y-12 md:mt-12">
+    <div className="space-y-6 md:mt-12">
       <div 
-        className={`border-outline relative rounded-xl border bg-background-primary p-6 ${
-          address.default ? 'border-l-4 border-l-teal-500 bg-teal-50/30' : ''
+        className={`relative rounded-xl border p-6 transition-all duration-200 ${
+          address.default 
+            ? 'border-green-200 bg-green-50/40 ring-1 ring-green-100' 
+            : 'border-gray-200 bg-white hover:border-gray-300'
         }`}
         role="article"
         aria-label={address.default ? "Default address" : "Address"}
@@ -119,24 +121,31 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
         {/* Header with name and default badge */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            {/* Mobile: checkmark at far left */}
+            {/* Mobile: checkmark at far left for instant scanning */}
             {address.default && (
               <div className="flex md:hidden">
-                <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
+                <div className="flex items-center justify-center w-6 h-6 bg-green-100 rounded-full">
+                  <svg className="w-4 h-4 text-green-700" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             )}
-            <div className="text-lg font-semibold text-body">{address.name}</div>
+            <div className={`text-lg font-semibold ${
+              address.default ? 'text-gray-900' : 'text-gray-800'
+            }`}>
+              {address.name}
+            </div>
           </div>
           
-          {/* Default badge - desktop/tablet */}
+          {/* Default badge - top right with light green background */}
           {address.default && (
             <span 
-              className="hidden md:flex items-center text-teal-700 bg-teal-100 rounded-full px-3 py-1 text-sm font-medium"
+              className="flex items-center bg-green-100 text-green-800 rounded-full px-3 py-1.5 text-sm font-medium shadow-sm"
               aria-label="Default address"
+              role="status"
             >
-              <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
               Default
@@ -146,36 +155,21 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
 
         {/* Address details */}
         <div className="space-y-1 mb-6">
-          <div className="text-md text-body">{address.address1}</div>
+          <div className="text-base text-gray-700">{address.address1}</div>
           {address.address2 && (
-            <div className="text-md text-body">{address.address2}</div>
+            <div className="text-base text-gray-700">{address.address2}</div>
           )}
-          <div className="text-md text-body">
+          <div className="text-base text-gray-700">
             {address.city}, {address.state} {address.zip}
           </div>
-          <div className="text-md text-body">{address.country}</div>
+          <div className="text-base text-gray-700">{address.country}</div>
           {address.phone && (
-            <div className="text-md text-body">Phone: {address.phone}</div>
+            <div className="text-base text-gray-600">Phone: {address.phone}</div>
           )}
           {address.company && (
-            <div className="text-md text-body">Company: {address.company}</div>
+            <div className="text-base text-gray-600">Company: {address.company}</div>
           )}
         </div>
-
-        {/* Mobile: Default badge */}
-        {address.default && (
-          <div className="flex md:hidden mb-4">
-            <span 
-              className="flex items-center text-teal-700 bg-teal-100 rounded-full px-3 py-1 text-sm font-medium"
-              aria-label="Default address"
-            >
-              <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              Default
-            </span>
-          </div>
-        )}
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
@@ -183,14 +177,15 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
           {!address.default && (
             <button
               onClick={() => handleSetAsDefault(address.id)}
-              className="text-teal-600 hover:text-teal-700 text-sm font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded"
+              className="text-green-600 hover:text-green-700 text-sm font-medium underline decoration-2 underline-offset-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded transition-colors duration-200"
               aria-pressed="false"
+              aria-label="Set this address as your default"
             >
               Set as default
             </button>
           )}
           
-          {/* Edit and Delete buttons */}
+          {/* Edit and Delete buttons - secondary for non-default, more subtle for default */}
           <div className="flex gap-2 sm:ml-auto">
             <Button
               elType={BUTTON_TYPE.LINK}
@@ -198,7 +193,7 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
               onClick={() => null}
               buttonStyle={BUTTON_STYLE.SECONDARY}
               small
-              className="whitespace-nowrap focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              className="whitespace-nowrap focus:ring-2 focus:ring-green-500 focus:ring-offset-2 border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Edit
             </Button>
@@ -207,7 +202,7 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
               onClick={() => handleDelete(address.id)}
               buttonStyle={BUTTON_STYLE.SECONDARY}
               small
-              className="whitespace-nowrap focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              className="whitespace-nowrap focus:ring-2 focus:ring-red-500 focus:ring-offset-2 border-gray-300 text-gray-700 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
             >
               Delete
             </Button>
@@ -221,7 +216,7 @@ const AddressCard: React.FC<AddressProps> = ({ address }) => {
 const AddressesSection: React.FC = () => {
   const { addresses } = useAddressContext();
   
-  // Sort addresses to put default first
+  // Sort addresses to pin default to the top
   const sortedAddresses = [...addresses].sort((a, b) => {
     if (a.default && !b.default) return -1;
     if (!a.default && b.default) return 1;
@@ -229,10 +224,16 @@ const AddressesSection: React.FC = () => {
   });
   
   return (
-    <div className="mt-8">
+    <div className="mt-8 space-y-4">
       {sortedAddresses.map((address) => (
         <AddressCard key={address.id} address={address} />
       ))}
+      {addresses.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          <p className="text-lg">No addresses saved yet.</p>
+          <p className="text-sm mt-2">Add your first address to get started.</p>
+        </div>
+      )}
     </div>
   );
 };

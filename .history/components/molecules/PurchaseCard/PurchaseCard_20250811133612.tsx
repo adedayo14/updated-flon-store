@@ -14,7 +14,7 @@ import { PURCHASE_TYPE } from 'types/purchase';
 import { formatDateToLocale } from 'lib/utils/date';
 import type { Maybe } from 'lib/graphql/generated/sdk';
 import ScheduleLabel from 'components/atoms/ScheduleLabel';
-import useCurrency from 'stores/currency';
+import useCurrencyStore from 'stores/currency';
 import Price from 'components/atoms/Price';
 import useI18n, { I18n } from 'hooks/useI18n';
 
@@ -62,7 +62,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   link,
   ...props
 }) => {
-  const formatPrice = useCurrency((store: any) => store.formatPrice);
+  const formatPrice = useCurrencyStore((state) => state.formatPrice);
 
   const i18n = useI18n();
   const text = purchaseCardText(i18n);

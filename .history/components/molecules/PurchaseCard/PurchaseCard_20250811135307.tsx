@@ -62,7 +62,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   link,
   ...props
 }) => {
-  const formatPrice = useCurrency((store: any) => store.formatPrice);
+  const formatPrice = useCurrencyStore((state) => state.formatPrice);
 
   const i18n = useI18n();
   const text = purchaseCardText(i18n);

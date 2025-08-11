@@ -1,0 +1,204 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import useCurrency from 'stores/currency';
+import useCartStore from 'stores/cart';
+import { denullifyArray } from 'lib/utils/denullify';
+import { mapProducts } from 'lib/utils/products';
+import getGQLClient from 'lib/graphql/client';
+import Button from 'components/atoms/Button';
+import { BUTTON_TYPE, BUTTON_STYLE } from 'types/shared/button';
+import Image from 'components/atoms/SafeImage';
+import Price from 'components/atoms/Price';
+import type { CartItemProps } from 'components/molecules/CartItem';
+
+export interface RelatedProductsProps {
+  cartItems: CartItemProps[];
+  className?: string;
+}
+
+interface SimpleProduct {
+  id: string;
+  title: string;
+  price: number;
+  image: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
+  href: string;
+}
+
+const RelatedProducts: React.FC<RelatedProductsProps> = ({ 
+  cartItems, 
+  className 
+}) => {
+  const [suggestedProducts, setSuggestedProducts] = useState<SimpleProduct[]>([]);
+  const [loading, setLoading] = useState(false);
+  const currency = useCurrency((store: any) => store.currency);
+  const addToCart = useCartStore((store) => store.addToCart);
+
+  // Check if there's a floss refill in the cart
+  const hasFlossRefill = cartItems.some(item => 
+    item.title.toLowerCase().includes('floss') && 
+    (item.title.toLowerCase().includes('refill') || item.title.toLowerCase().includes('replacement'))
+  );
+
+  // Get search query for related products - simplified to always show related items
+  const getRelatedProductQuery = useCallback(() => {
+    if (cartItems.length === 0) return '';
+    
+    // For floss refills, prioritize floss products
+    if (hasFlossRefill) {
+      return 'floss';
+    }
+    
+    // For other items, use broader search terms to find related products
+    const firstItem = cartItems[0];
+    const title = firstItem.title.toLowerCase();
+    
+    // Try to match categories, but fallback to general terms
+    if (title.includes('serum')) return 'skincare';
+    if (title.includes('cleanser') || title.includes('cleaning')) return 'skincare';
+    if (title.includes('moisturizer') || title.includes('moisturising')) return 'skincare';
+    if (title.includes('oil')) return 'skincare';
+    if (title.includes('vitamin')) return 'health';
+    if (title.includes('supplement')) return 'health';
+    if (title.includes('dental') || title.includes('tooth') || title.includes('oral')) return 'oral care';
+    
+    // Default to a broad search to ensure we always show something
+    return 'skincare health';
+  }, [cartItems, hasFlossRefill]);
+
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      if (cartItems.length === 0) {
+        setSuggestedProducts([]);
+        return;
+      }
+
+      const searchQuery = getRelatedProductQuery();
+      if (!searchQuery) return;
+
+      setLoading(true);
+      
+      try {
+        const client = getGQLClient();
+        const response = await client.searchProducts({ 
+          searchTerm: searchQuery, 
+          currency: currency.code
+        });
+        
+        const products = denullifyArray(response.data.products?.results || []);
+        const mappedProducts = mapProducts(products);
+        
+        // Filter out products that are already in the cart
+        const cartProductIds = cartItems.map(item => item.productId);
+        const filteredProducts = mappedProducts.filter(product => 
+          !cartProductIds.includes(product.id)
+        );
+        
+        // Convert to simple product format
+        const simpleProducts: SimpleProduct[] = filteredProducts.map(product => ({
+          id: product.id,
+          title: product.title,
+          price: product.price || 0,
+          image: {
+            src: product.image.src,
+            alt: product.image.alt,
+            width: product.image.width,
+            height: product.image.height,
+          },
+          href: product.href,
+        }));
+        
+        setSuggestedProducts(simpleProducts.slice(0, hasFlossRefill ? 3 : 2));
+      } catch (error) {
+        console.error('Error fetching related products:', error);
+        setSuggestedProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRelatedProducts();
+  }, [cartItems, hasFlossRefill, currency.code, getRelatedProductQuery]);
+
+  const handleAddToCart = async (product: SimpleProduct) => {
+    try {
+      await addToCart({
+        productId: product.id,
+        quantity: 1,
+      }, { showCartAfter: false }); // Don't close cart when adding
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={`p-4 ${className ?? ''}`}>
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-dividers rounded w-1/2"></div>
+          <div className="flex space-x-4">
+            <div className="h-20 w-20 bg-dividers rounded"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-dividers rounded"></div>
+              <div className="h-3 bg-dividers rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (suggestedProducts.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={`border-t border-dividers pt-4 ${className ?? ''}`}>
+      <h4 className="font-semibold text-primary mb-4">
+        {hasFlossRefill 
+          ? 'Complete your floss collection'
+          : 'You might also like'
+        }
+      </h4>
+      
+      <div className="space-y-3">
+        {suggestedProducts.map((product) => (
+          <div key={product.id} className="flex items-center space-x-3 p-3 bg-background-secondary rounded-lg">
+            <div className="flex-shrink-0">
+              <Image
+                src={product.image.src}
+                alt={product.image.alt}
+                width={50}
+                height={50}
+                layout="fixed"
+                className="rounded-lg object-cover"
+              />
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <h5 className="text-sm font-semibold text-primary truncate">
+                {product.title}
+              </h5>
+              <p className="text-sm font-semibold text-primary">
+                <Price price={product.price} />
+              </p>
+            </div>
+            
+            <button
+              onClick={() => handleAddToCart(product)}
+              className="flex-shrink-0 w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center hover:bg-accent-dark transition-colors"
+              aria-label={`Add ${product.title} to cart`}
+            >
+              +
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default RelatedProducts;

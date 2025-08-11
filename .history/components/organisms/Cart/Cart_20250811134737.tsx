@@ -62,18 +62,11 @@ const Cart: React.FC<CartProps> = ({
               className="my-6"
               onClose={closeCart}
             />
-            <ShippingProgressBar 
-              currentTotal={total}
-              freeShippingThreshold={30}
-              isUKOrder={true}
-              className="mb-6" 
-            />
             <ul>
               {items.map((item) => (
                 <CartItem key={item.id} {...item} />
               ))}
             </ul>
-            <RelatedProducts cartItems={items} className="mt-6 mb-4" />
             <AddMoreProductsCard empty={empty} />
           </div>
           {items.length === 0 && (

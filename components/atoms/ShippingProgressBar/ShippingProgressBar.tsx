@@ -28,10 +28,7 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
     <div className={`bg-background-secondary rounded-lg p-4 ${className ?? ''}`}>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-primary">
-          {hasQualified 
-            ? 'Congratulations! You qualify for free shipping'
-            : 'Free UK shipping'
-          }
+          Free UK shipping
         </span>
         {!hasQualified && (
           <span className="text-sm font-semibold text-primary">
@@ -51,7 +48,7 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
       
       <p className="text-xs text-body">
         {hasQualified 
-          ? 'Your order qualifies for free UK shipping'
+          ? 'Congratulations! Your order qualifies for free shipping'
           : `Add ${formatPrice(remaining)} more to your order for free UK shipping`
         }
       </p>

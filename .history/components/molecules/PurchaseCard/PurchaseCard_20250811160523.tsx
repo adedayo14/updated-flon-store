@@ -109,7 +109,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
               {productsImages.slice(0, 8).map((image, i) => (
                 <div
                   key={`${image.alt}-${i}`}
-                  className="relative aspect-square h-16 w-16 md:h-24 md:w-24">
+                  className="relative aspect-square h-12 w-12 md:h-16 md:w-16">
                   <Image
                     src={image.src}
                     layout="fill"

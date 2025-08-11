@@ -63,75 +63,76 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   ...props
 }) => {
   const formatPrice = useCurrency((store: any) => store.formatPrice);
+
   const i18n = useI18n();
   const text = purchaseCardText(i18n);
 
-  const isSubscription = props.type === PURCHASE_TYPE.SUBSCRIPTION;
-  const showDateRow = !(isSubscription && status === 'canceled');
-
   return (
     <div className="border-outline rounded-xl border bg-background-primary p-6">
-      {/* Top row */}
-      <div className="flex justify-between gap-6">
-        {/* Left column */}
-        <div className="flex-1 pr-0 md:pr-4">
-          <h3 className="mb-4 font-headings text-xl font-semibold text-primary">
-            {title}
-          </h3>
+      {/* Main content area with flex layout */}
+      <div className="flex justify-between">
+        {/* Left side content */}
+        <div className="flex-1 pr-4">
+          <div className="mb-4">
+            <h3 className="font-headings text-xl font-semibold text-primary">
+              {title}
+            </h3>
+          </div>
 
-          {showDateRow && (
-            <div className="mt-2 flex justify-start gap-2 text-sm">
-              <span className="text-body">
-                {isSubscription ? text.nextBillingLabel : text.orderDateLabel}
-              </span>
-              <span className="font-semibold text-primary">
-                {formatDateToLocale(date)}
-              </span>
-            </div>
-          )}
+          <div className="mt-4">
+            {/* Only show billing/order date if subscription is not cancelled */}
+            {!(props.type === PURCHASE_TYPE.SUBSCRIPTION && status === 'canceled') && (
+              <div className="flex justify-start gap-2 text-sm">
+                <span className="text-body">
+                  {props.type === PURCHASE_TYPE.SUBSCRIPTION
+                    ? text.nextBillingLabel
+                    : text.orderDateLabel}
+                </span>
+                <span className="font-semibold text-primary">
+                  {formatDateToLocale(date)}
+                </span>
+              </div>
+            )}
 
-          {!isSubscription && 'itemsCount' in props && (
-            <div className="mt-1 flex justify-start gap-2 text-sm">
-              <span className="text-body">{text.itemsLabel}</span>
-              <span className="font-semibold text-primary">
-                {props.itemsCount}
-              </span>
-            </div>
-          )}
+            {props.type === PURCHASE_TYPE.ORDER && (
+              <div className="mt-1 flex justify-start gap-2 text-sm">
+                <span className="text-body">{text.itemsLabel}</span>
+                <span className="font-semibold text-primary">
+                  {props.itemsCount}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Right column: status pill with image strip beneath */}
-        <div className="flex shrink-0 flex-col items-end">
+        {/* Right side - status and images */}
+        <div className="flex flex-col items-end gap-3">
           <StatusIndicator status={status} type={props.type} />
-
-          {productsImages?.length > 0 && (
-            <div className="mt-3 flex flex-row flex-wrap md:flex-nowrap justify-end gap-2">
-              {productsImages.slice(0, 8).map((image, i) => (
-                <div
-                  key={`${image.alt}-${i}`}
-                  className="relative aspect-square h-16 w-16 md:h-24 md:w-24">
-                  <Image
-                    src={image.src}
-                    layout="fill"
-                    alt={image.alt}
-                    className="rounded-lg"
-                    objectFit="cover"
-                    objectPosition="center"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-3 gap-2">
+            {productsImages.map((image, i) => (
+              <div
+                key={image.alt + i}
+                className="relative aspect-square w-12 h-12 md:w-16 md:h-16">
+                <Image
+                  src={image.src}
+                  layout="fill"
+                  alt={image.alt}
+                  className="rounded-lg"
+                  objectFit="cover"
+                  objectPosition="center"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <hr className="border-outline mt-6 border" />
+      <hr className="border-outline mt-6 border"></hr>
 
-      {/* Bottom row */}
       <div className="mt-6 md:flex md:items-center md:justify-between">
-        {isSubscription ? (
+        {props.type === 'subscription' ? (
           <div className="flex flex-col space-y-2">
-            {props.billingSchedule && (
+            {props?.billingSchedule && (
               <div className="inline-flex items-center justify-start space-x-2 text-sm text-primary">
                 <ScheduleLabel
                   type="billing"
@@ -141,14 +142,14 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
                   iconClasses="h-6"
                   icon
                 />
-                {props.recurringTotal != null && (
+                {props?.recurringTotal && (
                   <span className="font-semibold">
                     {formatPrice(props.recurringTotal)}
                   </span>
                 )}
               </div>
             )}
-            {props.orderSchedule && (
+            {props?.orderSchedule && (
               <div className="inline-flex items-center justify-start gap-2 text-sm text-primary">
                 <ScheduleLabel
                   type="order"
@@ -158,7 +159,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
                   iconClasses="h-6"
                   icon
                 />
-                {props.dateOrderPeriodEnd && (
+                {props?.dateOrderPeriodEnd && (
                   <span className="font-semibold">
                     {formatDateToLocale(props.dateOrderPeriodEnd)}
                   </span>
@@ -169,26 +170,28 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
         ) : (
           <div className="inline-flex items-center justify-start gap-2 text-sm text-primary">
             <span className="text-body">{text.totalLabel}</span>
-            {'total' in props && <Price price={props.total} className="font-semibold" />}
+
+            <Price price={props.total} className="font-semibold" />
           </div>
         )}
 
-        {/* Mobile and desktop buttons */}
         <Button
           elType={BUTTON_TYPE.LINK}
           href={link}
           fullWidth
-          className="mt-6 md:hidden"
-        >
-          {isSubscription ? text.manageLabel : text.viewOrderLabel}
+          className="mt-6 md:hidden">
+          {props.type === 'subscription'
+            ? text.manageLabel
+            : text.viewOrderLabel}
         </Button>
         <Button
           elType={BUTTON_TYPE.LINK}
           href={link}
           small
-          className="hidden md:block"
-        >
-          {isSubscription ? text.manageLabel : text.viewOrderLabel}
+          className="hidden md:block">
+          {props.type === 'subscription'
+            ? text.manageLabel
+            : text.viewOrderLabel}
         </Button>
       </div>
     </div>

@@ -35,6 +35,19 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
   const currency = useCurrency((store: any) => store.currency);
   const addToCart = useCartStore((store) => store.addToCart);
 
+  // Check if there's a floss refill in the cart
+  const hasFlossRefill = cartItems.some(item => 
+    item.title.toLowerCase().includes('floss') && 
+    (item.title.toLowerCase().includes('refill') || item.title.toLowerCase().includes('replacement'))
+  );
+
+  // Check if washcloth would be a good suggestion
+  const shouldPromoteWashcloth = cartItems.some(item => {
+    const title = item.title.toLowerCase();
+    return title.includes('shaving') || title.includes('soap') || title.includes('dental') || 
+           title.includes('menstrual') || title.includes('eco') || title.includes('bamboo');
+  });
+
   // Get search query for related products - using actual FLON categories
   const getRelatedProductQuery = useCallback(() => {
     if (cartItems.length === 0) return '';

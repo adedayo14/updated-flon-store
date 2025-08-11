@@ -122,7 +122,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
               </div>
             )}
             <div className="text-lg font-semibold text-body">
-              {card.brand ? card.brand.charAt(0).toUpperCase() + card.brand.slice(1).toLowerCase() : 'Card'} ending in {card.last4}
+              {card.brand?.charAt(0).toUpperCase() + card.brand?.slice(1).toLowerCase()} ending in {card.last4}
             </div>
           </div>
           

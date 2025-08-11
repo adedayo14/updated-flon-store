@@ -1153,8 +1153,8 @@
         },
         {
           "id": "lang.account.orders.status.canceled",
-          "label": "Order status cancelled",
-          "default": "Cancelled",
+          "label": "Order status canceled",
+          "default": "Canceled",
           "type": "short_text",
           "localized": true
         },

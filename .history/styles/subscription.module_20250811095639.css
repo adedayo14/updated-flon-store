@@ -1,0 +1,19 @@
+.tealText {
+  color: #008080;
+}
+
+.tealBorder {
+  border-color: #008080;
+}
+
+.tealButton {
+  color: #008080;
+  border-color: #008080;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.tealButton:hover {
+  background-color: #008080;
+  color: white;
+}

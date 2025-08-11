@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatPriceByCurrency } from 'lib/utils/price';
 import { formatDateToLocale } from 'lib/utils/date';
+import useI18n from 'hooks/useI18n';
 import type { SwellSubscription } from 'lib/graphql/generated/sdk';
 import { SUBSCRIPTION_STATUS } from 'types/subscription';
 
@@ -13,16 +14,57 @@ const ModernSubscriptionCard: React.FC<ModernSubscriptionCardProps> = ({
   subscription,
   locale = 'en-GB',
 }) => {
+  const i18n = useI18n();
+  
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case SUBSCRIPTION_STATUS.ACTIVE:
+        return i18n('account.subscriptions.status.active');
+      case SUBSCRIPTION_STATUS.PAID:
+        return i18n('account.subscriptions.status.paid');
+      case SUBSCRIPTION_STATUS.COMPLETE:
+        return i18n('account.subscriptions.status.complete');
+      case SUBSCRIPTION_STATUS.TRIAL:
+        return i18n('account.subscriptions.status.trial');
+      case SUBSCRIPTION_STATUS.PAUSED:
+        return i18n('account.subscriptions.status.paused');
+      case SUBSCRIPTION_STATUS.PENDING:
+        return i18n('account.subscriptions.status.pending');
+      case SUBSCRIPTION_STATUS.CANCELED:
+        return i18n('account.subscriptions.status.canceled');
+      case SUBSCRIPTION_STATUS.UNPAID:
+        return i18n('account.subscriptions.status.unpaid');
+      case SUBSCRIPTION_STATUS.PASTDUE:
+        return i18n('account.subscriptions.status.pastdue');
+      case SUBSCRIPTION_STATUS.DRAFT:
+        return i18n('account.subscriptions.status.draft');
+      default:
+        return status;
+    }
+  };
+
   const getStatusStyle = (status: string) => {
     switch (status) {
       case SUBSCRIPTION_STATUS.ACTIVE:
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 border-green-200';
+      case SUBSCRIPTION_STATUS.PAID:
+        return 'bg-green-100 text-green-800 border-green-200';
+      case SUBSCRIPTION_STATUS.COMPLETE:
+        return 'bg-green-100 text-green-800 border-green-200';
+      case SUBSCRIPTION_STATUS.TRIAL:
+        return 'bg-green-100 text-green-800 border-green-200';
       case SUBSCRIPTION_STATUS.PAUSED:
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case SUBSCRIPTION_STATUS.PENDING:
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case SUBSCRIPTION_STATUS.CANCELED:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-pink-100 text-red-600 border-pink-200';
+      case SUBSCRIPTION_STATUS.UNPAID:
+        return 'bg-pink-100 text-red-600 border-pink-200';
+      case SUBSCRIPTION_STATUS.PASTDUE:
+        return 'bg-pink-100 text-red-600 border-pink-200';
       default:
-        return 'bg-red-100 text-red-800';
+        return 'bg-gray-100 text-gray-600 border-gray-200';
     }
   };
 
@@ -54,11 +96,11 @@ const ModernSubscriptionCard: React.FC<ModernSubscriptionCardProps> = ({
           </h1>
         </div>
         <span
-          className={`px-3 py-1 rounded-full text-sm font-medium uppercase tracking-wide ${getStatusStyle(
+          className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium shadow-sm border ${getStatusStyle(
             subscription.status || ''
           )}`}
         >
-          {subscription.status}
+          {i18n(`account.subscriptions.status.${subscription.status}`)}
         </span>
       </div>
 

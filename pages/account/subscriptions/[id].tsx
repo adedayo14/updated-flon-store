@@ -603,8 +603,7 @@ const SubscriptionDetailPage: NextPageWithLayout<
           
           <Link 
             href="/categories/subscribe-save"
-            className={`inline-flex items-center gap-2 px-6 py-3 border bg-white rounded-lg text-sm font-semibold tracking-tight
-              transition-all duration-200 transform hover:-translate-y-0.5 ${styles.tealButton}`}
+            className="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full text-sm font-medium shadow-sm border border-teal-600 hover:border-teal-700 transition-all duration-200 transform hover:scale-105"
           >
             Start a new subscription
           </Link>

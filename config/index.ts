@@ -6,9 +6,8 @@ const getDevApiUrl = () => {
     // Client-side: use current host
     return `${window.location.protocol}//${window.location.host}`;
   }
-  // Server-side: check if we're in Next.js context and get the port from the request
-  // For now, use port 3001 since that's what the server started on
-  return `http://localhost:3001`;
+  // Server-side: For dev, use the same port as the Next.js server
+  return process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:3002`;
 };
 
 export const API_BASE_URL = dev

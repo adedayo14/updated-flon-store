@@ -36,8 +36,11 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ error }) => {
         const { success } = responseData;
         if (success) {
           console.log('Login successful, redirecting...');
-          // Use window.location for hard refresh to ensure cookies are properly set
-          window.location.href = '/admin/reviews';
+          // Add a small delay to ensure cookie is set before redirecting
+          setTimeout(() => {
+            // Use window.location for hard refresh to ensure cookies are properly set
+            window.location.href = '/admin/reviews';
+          }, 100);
         } else {
           setLoginError('Invalid credentials');
         }
@@ -118,7 +121,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (sessionId && validateAdminSession(sessionId)) {
     return {
       redirect: {
-        destination: '/admin/moderation',
+        destination: '/admin/reviews',
         permanent: false,
       },
     };

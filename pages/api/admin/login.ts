@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { authenticateAdmin, createAdminSession } from 'lib/auth/adminAuth';
 
 export default async function handler(
@@ -26,11 +26,17 @@ export default async function handler(
       
       // Set session cookie with better compatibility for production
       const isProduction = process.env.NODE_ENV === 'production';
-      const cookieOptions = isProduction 
-        ? `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600`
-        : `admin-session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`;
       
-      res.setHeader('Set-Cookie', cookieOptions);
+      if (isProduction) {
+        // Production settings for HTTPS
+        res.setHeader('Set-Cookie', [
+          `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600; Domain=flon.co.uk`,
+          `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600; Domain=.flon.co.uk`
+        ]);
+      } else {
+        // Development settings
+        res.setHeader('Set-Cookie', `admin-session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`);
+      }
       
       return res.status(200).json({
         success: true,

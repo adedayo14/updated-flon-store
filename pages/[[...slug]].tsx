@@ -38,7 +38,7 @@ export const getStaticPaths: GetStaticPaths = async ({
 
     const getPath = (slug: string, locale?: string) => ({
       params: {
-        slug: slug === homePageKey ? [''] : [slug],
+        slug: slug === homePageKey ? [] : [slug],
       },
       locale,
     });

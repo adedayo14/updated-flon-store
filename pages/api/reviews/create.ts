@@ -13,7 +13,7 @@ export default async function handler(
   }
 
   try {
-    const { productId, rating, title, body, images } = req.body || {};
+    const { productId, rating, title, body, images, orderId } = req.body || {};
 
     if (!productId || typeof productId !== 'string') {
       return res.status(400).json({ error: 'productId is required' });
@@ -27,6 +27,9 @@ export default async function handler(
     }
     if (!body || typeof body !== 'string') {
       return res.status(400).json({ error: 'body is required' });
+    }
+    if (!orderId || typeof orderId !== 'string') {
+      return res.status(400).json({ error: 'orderId is required for subscription products' });
     }
 
     // Identify user via session
@@ -56,15 +59,27 @@ export default async function handler(
       console.warn('createReview: getAccountDetails failed, proceeding with defaults');
     }
 
-    // Verify purchase for this product
+    // Verify purchase for this specific order and product
     let isVerified = false;
+    let orderFound = false;
+    
     try {
       const { data: ordersData } = await client.getOrders();
       const orders = ordersData?.orders?.results || [];
+      
       for (const order of orders) {
+        if (!order) continue;
+        
+        // Check if this is the specific order we're reviewing
+        const orderMatches = order.id === orderId || order.number === orderId;
+        if (!orderMatches) continue;
+        
+        orderFound = true;
+        
+        // Check if this order contains the product
         const items = order?.items || [];
-        const has = items.some((it: any) => it?.product?.id === productId);
-        if (has) {
+        const hasProduct = items.some((it: any) => it?.product?.id === productId);
+        if (hasProduct) {
           isVerified = true;
           break;
         }
@@ -72,6 +87,15 @@ export default async function handler(
     } catch (e) {
       console.warn('createReview: getOrders failed, marking as not verified');
       isVerified = false;
+    }
+
+    // Ensure the order exists and contains the product
+    if (!orderFound) {
+      return res.status(400).json({ error: 'Order not found or does not belong to this account' });
+    }
+    
+    if (!isVerified) {
+      return res.status(400).json({ error: 'This order does not contain the specified product' });
     }
 
     const userName = (account.name && account.name.trim()) || account.email || 'Customer';
@@ -86,6 +110,7 @@ export default async function handler(
       status: 'pending',
       is_verified_purchase: !!isVerified,
       images: Array.isArray(images) ? images.filter((u: any) => typeof u === 'string') : undefined,
+      order_id: orderId, // Associate review with specific order
     });
 
     return res.status(201).json({ success: true, review: newReview });

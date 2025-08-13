@@ -153,7 +153,15 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
   const [ratingFilter, setRatingFilter] = useState<string>('');
   const [sortBy, setSortBy] = useState<'helpful' | 'recent' | 'rating_high' | 'rating_low'>('helpful');
   const [showForm, setShowForm] = useState(false);
-  const [eligibility, setEligibility] = useState<{ loggedIn: boolean; hasPurchased: boolean; canReview: boolean } | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<string>(''); // Track selected order for review
+  const [eligibility, setEligibility] = useState<{ 
+    loggedIn: boolean; 
+    hasPurchased: boolean; 
+    canReview: boolean;
+    eligible_orders?: Array<{id: string, date: string}>;
+    total_orders?: number;
+    reviewed_orders?: number;
+  } | null>(null);
   const [helpfulVotes, setHelpfulVotes] = useState<Record<string, boolean>>({});
   const [openDropdown, setOpenDropdown] = useState<'rating' | 'sort' | null>(null);
 
@@ -243,10 +251,10 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
         const data = await response.json();
         setEligibility(data);
       } else {
-        setEligibility({ loggedIn: false, hasPurchased: false, canReview: false });
+        setEligibility({ loggedIn: false, hasPurchased: false, canReview: false, eligible_orders: [] });
       }
     } catch {
-      setEligibility({ loggedIn: false, hasPurchased: false, canReview: false });
+      setEligibility({ loggedIn: false, hasPurchased: false, canReview: false, eligible_orders: [] });
     }
   }, [productId]);
 
@@ -297,6 +305,12 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
 
   const handleReviewSubmit = async (reviewData: any) => {
     try {
+      // Ensure we have a selected order
+      if (!selectedOrder) {
+        alert('Please select an order to review first.');
+        return;
+      }
+
       const response = await fetch('/api/reviews/create', {
         method: 'POST',
         headers: {
@@ -307,16 +321,18 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
           rating: reviewData.rating,
           title: reviewData.title,
           body: reviewData.review_body,
-          images: reviewData.images || []
+          images: reviewData.images || [],
+          orderId: selectedOrder // Include the selected order ID
         }),
       });
 
       if (response.ok) {
-        // Close the form
+        // Close the form and reset selection
         setShowForm(false);
+        setSelectedOrder('');
         // Refresh the reviews
         fetchReviews();
-        // Refresh eligibility (user may no longer be able to review)
+        // Refresh eligibility (user may no longer be able to review this order)
         fetchEligibility();
         // Show success message (optional)
         alert('Review submitted successfully! It will be visible after approval.');
@@ -364,12 +380,57 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
           </h1>
         
         {eligibility?.canReview && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 mb-6"
-          >
-            Write a review
-          </button>
+          <div className="mb-6">
+            {eligibility.eligible_orders && eligibility.eligible_orders.length > 1 ? (
+              <div className="space-y-4">
+                <p className="text-gray-700">
+                  You have {eligibility.eligible_orders.length} orders that can be reviewed. 
+                  Select which order you&apos;d like to review:
+                </p>
+                <div className="grid gap-2 max-w-md">
+                  {eligibility.eligible_orders.map((order) => (
+                    <label key={order.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="order-selection"
+                        value={order.id}
+                        checked={selectedOrder === order.id}
+                        onChange={(e) => setSelectedOrder(e.target.value)}
+                        className="text-teal-600 focus:ring-teal-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">Order #{order.id}</div>
+                        <div className="text-sm text-gray-500">
+                          {order.date ? new Date(order.date).toLocaleDateString() : 'Date not available'}
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                {selectedOrder && (
+                  <button
+                    onClick={() => setShowForm(true)}
+                    className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                  >
+                    Write a review for this order
+                  </button>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  // Auto-select the only available order
+                  if (eligibility.eligible_orders && eligibility.eligible_orders.length === 1) {
+                    setSelectedOrder(eligibility.eligible_orders[0].id);
+                  }
+                  setShowForm(true);
+                }}
+                className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+              >
+                Write a review
+              </button>
+            )}
+          </div>
         )}
         
         <div className="flex items-center justify-center gap-4 text-lg">

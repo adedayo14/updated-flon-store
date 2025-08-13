@@ -18,6 +18,7 @@ let nextConfig = {
     domains: [
       'cdn.schema.io',
       'cdn.swell.store',
+      'images.unsplash.com',
       ...(isDev ? ['cdn.swell.test'] : []),
     ],
     dangerouslyAllowSVG: true,

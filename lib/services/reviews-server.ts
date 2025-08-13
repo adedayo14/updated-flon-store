@@ -15,6 +15,7 @@ export interface Review {
   updated_at: string;
   helpful_count: number;
   images?: string[];
+  order_id?: string; // Track which order this review is for (allows multiple reviews per product)
 }
 
 interface ReviewsData {
@@ -110,6 +111,19 @@ export function updateReviewStatus(reviewId: string, status: 'approved' | 'rejec
   
   writeReviewsToFile(reviewsData);
   return reviewsData.reviews[reviewIndex];
+}
+
+export function deleteReview(reviewId: string): boolean {
+  const reviewsData = readReviewsFromFile();
+  const reviewIndex = reviewsData.reviews.findIndex((review: Review) => review.id === reviewId);
+  
+  if (reviewIndex === -1) {
+    return false;
+  }
+
+  reviewsData.reviews.splice(reviewIndex, 1);
+  writeReviewsToFile(reviewsData);
+  return true;
 }
 
 export function getProductReviewStats(productId: string): {

@@ -86,6 +86,7 @@ export interface CreateReviewRequest {
   title: string;
   review_body: string;
   images?: File[];
+  order_id?: string; // For subscription products - allows multiple reviews per product
 }
 
 export interface UpdateReviewRequest {

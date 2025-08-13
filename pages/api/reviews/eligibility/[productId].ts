@@ -38,17 +38,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Check if user has purchased this product
+    // Check if user has purchased this product and get eligible orders
     let hasPurchased = false;
+    const eligibleOrders: Array<{id: string, date: string}> = [];
+    
     try {
       const { data: ordersData } = await client.getOrders();
       const orders = ordersData?.orders?.results || [];
+      
       for (const order of orders) {
+        if (!order) continue;
+        
         const items = order?.items || [];
-        const has = items.some((it: any) => it?.product?.id === productId);
-        if (has) {
+        const hasProduct = items.some((it: any) => it?.product?.id === productId);
+        if (hasProduct) {
           hasPurchased = true;
-          break;
+          eligibleOrders.push({
+            id: order.id || order.number || '',
+            date: order.dateCreated || ''
+          });
         }
       }
     } catch (e) {
@@ -56,23 +64,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       hasPurchased = false;
     }
 
-    // Check if user has already reviewed this product
-    let hasAlreadyReviewed = false;
+    // Check which orders already have reviews
+    const reviewedOrderIds: string[] = [];
     try {
       const allReviews = getAllReviews();
-      hasAlreadyReviewed = allReviews.some(
-        review => review.product_id === productId && review.user_id === accountId
+      const reviewsWithOrders = allReviews.filter(review => 
+        review.product_id === productId && 
+        review.user_id === accountId &&
+        (review as any).order_id // Cast to access the new field
       );
+      
+      for (const review of reviewsWithOrders) {
+        const orderId = (review as any).order_id;
+        if (orderId) {
+          reviewedOrderIds.push(orderId);
+        }
+      }
     } catch (e) {
       console.warn('eligibility: check existing reviews failed');
     }
 
-    const canReview = loggedIn && hasPurchased && !hasAlreadyReviewed;
+    // Filter out orders that already have reviews
+    const unreviewed_orders = eligibleOrders.filter(
+      order => !reviewedOrderIds.includes(order.id)
+    );
+
+    const canReview = loggedIn && hasPurchased && unreviewed_orders.length > 0;
 
     return res.status(200).json({
       loggedIn,
       hasPurchased,
-      canReview
+      canReview,
+      eligible_orders: unreviewed_orders, // Orders that can be reviewed
+      total_orders: eligibleOrders.length,
+      reviewed_orders: reviewedOrderIds.length
     });
   } catch (error) {
     console.error('Error checking review eligibility:', error);

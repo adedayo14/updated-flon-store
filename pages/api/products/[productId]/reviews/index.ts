@@ -56,7 +56,7 @@ export default async function handler(
 
   try {
     switch (method) {
-      case 'GET':
+      case 'GET': {
         // Get reviews for a product from local storage
         const { search, rating: ratingFilter, sort_by, page = '1', limit = '10' } = req.query;
         
@@ -151,8 +151,9 @@ export default async function handler(
             }
           });
         }
+      }
 
-      case 'POST':
+      case 'POST': {
         // Create a new review
         const { 
           rating, 
@@ -223,7 +224,7 @@ export default async function handler(
 
         // For testing purposes, allow reviews without purchase verification
         // In production, you would check if user has purchased the product
-        let isVerifiedPurchase = true; // Temporarily set to true for testing
+        const isVerifiedPurchase = true; // Temporarily set to true for testing
 
         // Create review in local storage
         try {
@@ -253,6 +254,7 @@ export default async function handler(
           console.error('Error creating review:', error);
           return res.status(500).json({ error: 'Failed to create review' });
         }
+      }
 
       default:
         res.setHeader('Allow', ['GET', 'POST']);

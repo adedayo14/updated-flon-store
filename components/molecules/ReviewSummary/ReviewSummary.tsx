@@ -2,14 +2,12 @@
 //for the summary under the product title.
 
 import React from 'react';
-import type { ReviewSummaryProps, Rating } from 'types/shared/reviews';
+import type { ReviewSummaryProps } from 'types/shared/reviews';
 
 const ReviewSummary: React.FC<ReviewSummaryProps> = ({
-  product_id,
   summary,
   onWriteReview,
   onViewAllReviews,
-  onRatingFilter,
   className,
 }) => {
   // Don't render anything if no summary or no reviews

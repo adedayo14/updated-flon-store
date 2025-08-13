@@ -124,11 +124,9 @@ export interface AdminReviewAction {
 
 // Component Props Types
 export interface ReviewSummaryProps {
-  product_id: string;
   summary: ReviewSummary;
   onWriteReview?: () => void;
   onViewAllReviews?: () => void;
-  onRatingFilter?: (rating: Rating) => void;
   className?: string;
 }
 

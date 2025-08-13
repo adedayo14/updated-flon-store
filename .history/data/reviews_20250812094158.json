@@ -1,0 +1,18 @@
+{
+  "reviews": [
+    {
+      "id": "test-pending-review-1",
+      "product_id": "6899ddfca959c6001142af63",
+      "user_id": "user-test-pending-1",
+      "user_name": "Alex Johnson",
+      "rating": 4,
+      "title": "Great eco-friendly option",
+      "review_body": "This silk dental floss is a great sustainable alternative. It works well and feels good to use. The packaging is beautiful too. I would recommend it to anyone looking for an environmentally friendly option.",
+      "status": "pending",
+      "is_verified_purchase": true,
+      "created_at": "2025-08-12T12:00:00Z",
+      "updated_at": "2025-08-12T12:00:00Z",
+      "helpful_count": 0
+    }
+  ]
+}

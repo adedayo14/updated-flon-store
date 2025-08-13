@@ -1,0 +1,119 @@
+// Product service for managing product data and mapping IDs to names
+import getGQLClient from 'lib/graphql/client';
+
+export interface Product {
+  id: string;
+  name: string;
+  slug?: string;
+  description?: string;
+  price?: number;
+  currency?: string;
+  images?: Array<{ url: string; alt?: string }>;
+}
+
+/**
+ * Get all products from the store using Swell API
+ */
+export async function getAllProducts(): Promise<Product[]> {
+  try {
+    const client = getGQLClient();
+    
+    // Get products from Swell API
+    const response = await client.getAllProducts();
+    const swellProducts = response?.data?.products?.results || [];
+    
+    if (swellProducts.length > 0) {
+      return swellProducts.map((product: any) => ({
+        id: product?.id || '',
+        name: product?.name || 'Unknown Product',
+        slug: product?.slug || '',
+        description: product?.description || '',
+        price: product?.price || 0,
+        currency: product?.currency || 'USD',
+        images: product?.images?.map((img: any) => ({
+          url: img?.file?.url || '',
+          alt: img?.caption || product?.name || 'Product Image'
+        })) || []
+      }));
+    }
+    
+    // If no products from Swell, return empty array
+    console.warn('No products found in Swell store');
+    return [];
+  } catch (error) {
+    console.error('Error fetching products from Swell:', error);
+    return [];
+  }
+}
+
+/**
+ * Get product by ID using Swell API
+ */
+export async function getProductById(productId: string): Promise<Product | null> {
+  try {
+    const client = getGQLClient();
+    
+    // Get product from Swell API
+    const response = await client.getProduct({ id: productId });
+    const product = response?.data?.product;
+    
+    if (product) {
+      const productData = product as any;
+      return {
+        id: productData?.id || '',
+        name: productData?.name || 'Unknown Product',
+        slug: productData?.slug || '',
+        description: productData?.description || '',
+        price: productData?.price || 0,
+        currency: productData?.currency || 'USD',
+        images: productData?.images?.map((img: any) => ({
+          url: img?.file?.url || '',
+          alt: img?.caption || productData?.name || 'Product Image'
+        })) || []
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return null;
+  }
+}
+
+/**
+ * Get product name by ID (utility function)
+ */
+export async function getProductNameById(productId: string): Promise<string> {
+  const product = await getProductById(productId);
+  return product?.name || `Product ${productId}`;
+}
+
+/**
+ * Get all product IDs in the system
+ */
+export async function getAllProductIds(): Promise<string[]> {
+  const products = await getAllProducts();
+  return products.map(p => p.id);
+}
+
+/**
+ * Create a product ID to name mapping for efficient lookups
+ */
+export async function getProductNameMapping(): Promise<Map<string, string>> {
+  const products = await getAllProducts();
+  const mapping = new Map<string, string>();
+  
+  products.forEach(product => {
+    mapping.set(product.id, product.name);
+  });
+  
+  return mapping;
+}
+
+/**
+ * Get multiple products by their IDs
+ */
+export async function getProductsByIds(productIds: string[]): Promise<Product[]> {
+  const allProducts = await getAllProducts();
+  return allProducts.filter(product => productIds.includes(product.id));
+}

@@ -1,0 +1,74 @@
+{
+  "reviews": [
+    {
+      "id": "review-001",
+      "product_id": "6899ddfca959c6001142af63",
+      "user_id": "user-001",
+      "user_name": "Emma Thompson",
+      "rating": 5,
+      "title": "Amazing eco-friendly alternative!",
+      "review_body": "I've been using this silk dental floss for 3 months now and I'm absolutely in love! It's so much better than plastic floss - stronger, doesn't break, and the peppermint flavor is refreshing. The glass jar is beautiful and I love that I can refill it. Perfect for my zero-waste lifestyle!",
+      "status": "pending",
+      "is_verified_purchase": true,
+      "created_at": "2025-08-10T14:30:00Z",
+      "updated_at": "2025-08-10T14:30:00Z",
+      "helpful_count": 0
+    },
+    {
+      "id": "review-002", 
+      "product_id": "6899ddfca959c6001142af63",
+      "user_id": "user-002",
+      "user_name": "James Wilson",
+      "rating": 4,
+      "title": "Good quality but expensive",
+      "review_body": "The floss works really well and I like that it's sustainable. It's definitely stronger than regular floss and the mint taste is nice. However, it is quite pricey compared to traditional options. Worth it for the environment though!",
+      "status": "pending",
+      "is_verified_purchase": true,
+      "created_at": "2025-08-09T11:15:00Z",
+      "updated_at": "2025-08-09T11:15:00Z",
+      "helpful_count": 0
+    },
+    {
+      "id": "review-003",
+      "product_id": "6899ddfca959c6001142af63", 
+      "user_id": "user-003",
+      "user_name": "Sarah Martinez",
+      "rating": 2,
+      "title": "Not impressed - breaks easily",
+      "review_body": "I really wanted to love this eco-friendly floss but unfortunately it keeps breaking when I use it. Maybe it's just me but I have tight spaces between my teeth and this floss just snaps. The jar is nice but the product itself doesn't work for me. Going back to my regular floss.",
+      "status": "pending",
+      "is_verified_purchase": false,
+      "created_at": "2025-08-08T16:45:00Z",
+      "updated_at": "2025-08-08T16:45:00Z",
+      "helpful_count": 0
+    },
+    {
+      "id": "review-004",
+      "product_id": "6899ddfca959c6001142af63",
+      "user_id": "user-004", 
+      "user_name": "Michael Chen",
+      "rating": 5,
+      "title": "Perfect for sensitive gums!",
+      "review_body": "I have really sensitive gums and this silk floss is so gentle compared to regular floss. No more bleeding or pain! The natural ingredients are great and I love that it's biodegradable. The 90m length lasts ages too. Highly recommend for anyone with gum sensitivity.",
+      "status": "pending",
+      "is_verified_purchase": true,
+      "created_at": "2025-08-07T09:20:00Z",
+      "updated_at": "2025-08-07T09:20:00Z",
+      "helpful_count": 0
+    },
+    {
+      "id": "review-005",
+      "product_id": "6899ddfca959c6001142af63",
+      "user_id": "user-005",
+      "user_name": "Lisa Rodriguez", 
+      "rating": 1,
+      "title": "Terrible experience - avoid!",
+      "review_body": "Absolute waste of money! The floss tastes horrible, nothing like peppermint. The jar arrived with a crack and when I contacted customer service they were incredibly rude and unhelpful. Refused to replace the damaged item. Save yourself the hassle and buy something else. This company clearly doesn't care about customers.",
+      "status": "pending",
+      "is_verified_purchase": true,
+      "created_at": "2025-08-06T13:55:00Z",
+      "updated_at": "2025-08-06T13:55:00Z",
+      "helpful_count": 0
+    }
+  ]
+}

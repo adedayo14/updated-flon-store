@@ -1,0 +1,459 @@
+ready - started server on 0.0.0.0:3000, url: http://localhost:3000
+info  - Loaded env from /Users/dayo/FLON MASTER AUG /flon-master-copy/.env.local
+info  - Loaded env from /Users/dayo/FLON MASTER AUG /flon-master-copy/.env
+event - compiled client and server successfully in 866 ms (881 modules)
+wait  - compiling /404 (client and server)...
+wait  - compiling /admin/login (client and server)...
+event - compiled client and server successfully in 214 ms (890 modules)
+event - compiled client and server successfully (894 modules)
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+wait  - compiling /api/cart (client and server)...
+wait  - compiling /api/preview (client and server)...
+event - compiled successfully in 39 ms (327 modules)
+event - compiled successfully (328 modules)
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 211 ms (1056 modules)
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+wait  - compiling /api/admin/reviews/pending (client and server)...
+event - compiled successfully in 48 ms (402 modules)
+Error fetching pending reviews: TypeError: (0 , lib_services_reviews__WEBPACK_IMPORTED_MODULE_0__.getPendingReviews) is not a function
+    at handler (webpack-internal:///(api)/./pages/api/admin/reviews/pending.ts:14:103)
+    at Object.apiResolver (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/api-utils/node.js:366:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DevServer.runApi (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/next-server.js:481:9)
+    at async Object.fn (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/next-server.js:741:37)
+    at async Router.execute (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/router.js:252:36)
+    at async DevServer.run (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:365:29)
+    at async DevServer.run (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/dev/next-dev-server.js:709:20)
+    at async DevServer.handleRequest (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:303:20)
+Error fetching pending reviews: TypeError: (0 , lib_services_reviews__WEBPACK_IMPORTED_MODULE_0__.getPendingReviews) is not a function
+    at handler (webpack-internal:///(api)/./pages/api/admin/reviews/pending.ts:14:103)
+    at Object.apiResolver (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/api-utils/node.js:366:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DevServer.runApi (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/next-server.js:481:9)
+    at async Object.fn (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/next-server.js:741:37)
+    at async Router.execute (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/router.js:252:36)
+    at async DevServer.run (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:365:29)
+    at async DevServer.run (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/dev/next-dev-server.js:709:20)
+    at async DevServer.handleRequest (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:303:20)
+wait  - compiling...
+event - compiled client and server successfully in 1095 ms (887 modules)
+wait  - compiling...
+event - compiled successfully in 366 ms (578 modules)
+wait  - compiling /api/admin/reviews/pending (client and server)...
+event - compiled successfully in 41 ms (318 modules)
+wait  - compiling /api/admin/login (client and server)...
+event - compiled successfully in 42 ms (320 modules)
+Authenticating admin: {
+  username: 'admin',
+  password: 'Adedayo01',
+  expectedUsername: 'admin',
+  expectedPassword: 'Adedayo01'
+}
+Created admin session: 5qesk9y7i4ime7uhrui Total sessions: 6
+wait  - compiling /admin/reviews (client and server)...
+event - compiled client and server successfully in 178 ms (903 modules)
+Swell SDK initialized successfully
+Validating admin session: 5qesk9y7i4ime7uhrui Valid: true Total sessions: 6
+Fetching all products from Swell API...
+Error fetching products from Swell API: TypeError: Cannot read properties of undefined (reading 'list')
+    at getAllProducts (webpack-internal:///./lib/services/products.ts:42:53)
+    at getProductNameMapping (webpack-internal:///./lib/services/products.ts:142:28)
+    at getServerSideProps (webpack-internal:///./pages/admin/reviews.tsx:444:114)
+    at Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:508:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+    at async cacheEntry.responseCache.get.isManualRevalidate.isManualRevalidate (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:796:28)
+    at async /Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/response-cache/index.js:80:36
+wait  - compiling /404 (client and server)...
+event - compiled client and server successfully in 248 ms (909 modules)
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Swell SDK initialized successfully
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Fetching all products from Swell API...
+Error fetching products from Swell API: TypeError: Cannot read properties of undefined (reading 'list')
+    at getAllProducts (webpack-internal:///./lib/services/products.ts:42:53)
+    at getProductNameMapping (webpack-internal:///./lib/services/products.ts:142:28)
+    at getServerSideProps (webpack-internal:///./pages/admin/reviews.tsx:444:114)
+    at Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:508:26)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+    at async cacheEntry.responseCache.get.isManualRevalidate.isManualRevalidate (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:796:28)
+    at async /Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/response-cache/index.js:80:36
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 244 ms (1055 modules)
+wait  - compiling /api/cart (client and server)...
+wait  - compiling /api/preview (client and server)...
+event - compiled successfully in 58 ms (404 modules)
+event - compiled successfully (405 modules)
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+wait  - compiling /admin/products...
+event - compiled client and server successfully in 177 ms (895 modules)
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 357 ms (890 modules)
+wait  - compiling...
+event - compiled successfully in 555 ms (580 modules)
+wait  - compiling...
+event - compiled successfully in 296 ms (578 modules)
+wait  - compiling /admin/products (client and server)...
+event - compiled client and server successfully in 72 ms (890 modules)
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 114 ms (325 modules)
+wait  - compiling /admin/reviews...
+event - compiled client and server successfully in 161 ms (893 modules)
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Failed to fetch product: 6899ddfca959c6001142af63 401
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Active admin sessions: 5
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 367 ms (1036 modules)
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+wait  - compiling /404 (client and server)...
+event - compiled client and server successfully in 54 ms (1043 modules)
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 25 ms (400 modules)
+wait  - compiling /admin/reviews...
+event - compiled client and server successfully in 146 ms (900 modules)
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Failed to fetch product: 6899ddfca959c6001142af63 401
+Active admin sessions: 5
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Active admin sessions: 6
+Active admin sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 405 ms (900 modules)
+wait  - compiling...
+event - compiled client and server successfully in 307 ms (890 modules)
+Active admin sessions: 6
+wait  - compiling /admin/reviews...
+event - compiled client and server successfully in 100 ms (893 modules)
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+Failed to fetch product: 6899ddfca959c6001142af63 401
+Validating admin session: sg8iyc8qm38me7ubi97 Valid: true Total sessions: 6
+wait  - compiling /api/admin/logout (client and server)...
+event - compiled successfully in 40 ms (321 modules)
+Removed admin session: sg8iyc8qm38me7ubi97 Total sessions: 5
+wait  - compiling /api/admin/login (client and server)...
+event - compiled successfully in 23 ms (322 modules)
+Authenticating admin: {
+  username: 'admin',
+  password: 'Adedayo01',
+  expectedUsername: 'admin',
+  expectedPassword: 'Adedayo01'
+}
+Created admin session: opy1wqhbvdame7uq8qu Total sessions: 6
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+Failed to fetch product: 6899ddfca959c6001142af63 401
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+Failed to fetch product: 6899ddfca959c6001142af63 401
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 141 ms (325 modules)
+wait  - compiling /admin/products...
+event - compiled client and server successfully in 93 ms (893 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+Active admin sessions: 6
+Active admin sessions: 6
+Active admin sessions: 5
+wait  - compiling...
+wait  - compiling /admin/products (client and server)...
+event - compiled client and server successfully in 480 ms (889 modules)
+event - compiled client and server successfully (890 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 35 ms (324 modules)
+wait  - compiling /admin/reviews...
+event - compiled client and server successfully in 153 ms (905 modules)
+Active admin sessions: 6
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+Active admin sessions: 5
+✅ Fetched product name: 6899ddfca959c6001142af63 -> Silk Dental Floss Starter Pack
+Active admin sessions: 6
+wait  - compiling /admin/products...
+event - compiled client and server successfully in 83 ms (908 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+Active admin sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 365 ms (890 modules)
+Active admin sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 417 ms (890 modules)
+Active admin sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 326 ms (890 modules)
+Active admin sessions: 5
+Active admin sessions: 5
+Active admin sessions: 5
+Active admin sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 331 ms (887 modules)
+wait  - compiling...
+event - compiled successfully in 289 ms (578 modules)
+wait  - compiling...
+event - compiled successfully in 306 ms (578 modules)
+wait  - compiling...
+event - compiled successfully in 296 ms (578 modules)
+wait  - compiling...
+event - compiled successfully in 271 ms (578 modules)
+Active admin sessions: 6
+wait  - compiling /admin/products (client and server)...
+event - compiled client and server successfully in 149 ms (890 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+🔍 Fetching products from Swell API...
+✅ Successfully fetched 15 products from Swell API
+Active admin sessions: 6
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 31 ms (325 modules)
+wait  - compiling /admin/reviews...
+event - compiled client and server successfully in 89 ms (908 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+✅ Fetched product name: 6899ddfca959c6001142af63 -> Silk Dental Floss Starter Pack
+Active admin sessions: 6
+Active admin sessions: 5
+Active admin sessions: 6
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 583 ms (1036 modules)
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+wait  - compiling /404 (client and server)...
+event - compiled client and server successfully in 112 ms (1043 modules)
+wait  - compiling /api/admin/reviews/[reviewId]/moderate (client and server)...
+event - compiled successfully in 28 ms (396 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+Error moderating review: TypeError: (0 , lib_services_reviews__WEBPACK_IMPORTED_MODULE_0__.updateReviewStatus) is not a function
+    at handler (webpack-internal:///(api)/./pages/api/admin/reviews/[reviewId]/moderate.ts:44:103)
+    at Object.apiResolver (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/api-utils/node.js:366:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DevServer.runApi (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/next-server.js:481:9)
+    at async Object.fn (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/next-server.js:741:37)
+    at async Router.execute (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/router.js:252:36)
+    at async DevServer.run (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:365:29)
+    at async DevServer.run (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/dev/next-dev-server.js:709:20)
+    at async DevServer.handleRequest (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:303:20)
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 49 ms (403 modules)
+Active admin sessions: 6
+Active admin sessions: 6
+Active admin sessions: 5
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+wait  - compiling /api/preview (client and server)...
+wait  - compiling /api/cart (client and server)...
+event - compiled successfully in 64 ms (393 modules)
+event - compiled successfully (401 modules)
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+Active admin sessions: 6
+Active admin sessions: 6
+Active admin sessions: 6
+Active admin sessions: 6
+wait  - compiling...
+wait  - compiling /admin/reviews (client and server)...
+wait  - compiling /api/preview (client and server)...
+wait  - compiling /api/cart (client and server)...
+event - compiled client and server successfully in 566 ms (890 modules)
+wait  - compiling...
+event - compiled client and server successfully in 36 ms (910 modules)
+Validating admin session: opy1wqhbvdame7uq8qu Valid: true Total sessions: 6
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 73 ms (1056 modules)
+✅ Fetched product name: 6899ddfca959c6001142af63 -> Silk Dental Floss Starter Pack
+✅ Fetched real store settings: Raw Foods
+✅ Fetched real store settings: Raw Foods
+✅ Fetched real store settings: Raw Foods
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: Raw Foods
+Active admin sessions: 6
+wait  - compiling...
+event - compiled client and server successfully in 358 ms (1056 modules)
+✅ Fetched real store settings: Raw Foods
+✅ Fetched real store settings: Raw Foods
+Active admin sessions: 5
+Active admin sessions: 5
+wait  - compiling...
+event - compiled client and server successfully in 417 ms (909 modules)
+Active admin sessions: 5
+Active admin sessions: 6
+✅ Fetched real store settings: Raw Foods
+wait  - compiling /api/preview (client and server)...
+event - compiled successfully in 15 ms (328 modules)
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 99 ms (1056 modules)
+✅ Fetched real store settings: Raw Foods
+✅ Fetched real store settings: Raw Foods
+✅ Fetched real store settings: Raw Foods
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: Raw Foods
+✅ Fetched real store settings: Raw Foods
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: Raw Foods
+wait  - compiling...
+event - compiled client and server successfully in 387 ms (888 modules)
+wait  - compiling /api/cart (client and server)...
+wait  - compiling /api/preview (client and server)...
+event - compiled successfully in 58 ms (323 modules)
+event - compiled successfully (324 modules)
+wait  - compiling /[[...slug]] (client and server)...
+event - compiled client and server successfully in 77 ms (1050 modules)
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+Active admin sessions: 6
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: FLON.
+wait  - compiling...
+event - compiled client and server successfully in 362 ms (1050 modules)
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+✅ Fetched real store settings: FLON.
+Error in getStaticProps: TypeError: client.getCategoryPreviewData is not a function
+    at eval (webpack-internal:///./lib/editor/prop_mappers.ts:32:52)
+    at Array.map (<anonymous>)
+    at categories_preview_mapCategories (webpack-internal:///./lib/editor/prop_mappers.ts:32:33)
+    at applyPropMappers (webpack-internal:///./lib/editor/sections.ts:145:34)
+    at mapSectionProps (webpack-internal:///./lib/editor/sections.ts:169:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async propsCallback (webpack-internal:///./pages/[[...slug]].tsx:86:32)
+    at async eval (webpack-internal:///./lib/utils/fetch_decorators.ts:19:24)
+    at async Object.renderToHTML (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/render.js:386:20)
+    at async doRender (/Users/dayo/FLON MASTER AUG /flon-master-copy/node_modules/next/dist/server/base-server.js:687:38)
+✅ Fetched real store settings: FLON.
+Active admin sessions: 6
+Active admin sessions: 6

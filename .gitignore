@@ -56,3 +56,7 @@ build-storybook.log
 
 # eslint cache
 .eslintcache
+
+# editor history and local backups
+.history
+backup/

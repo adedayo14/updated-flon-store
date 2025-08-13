@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "scripts": {
+    "test-api": "node --loader ts-node/esm test-api-direct.ts"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "reviews": [
+    {
+      "id": "test-pending-review-1",
+      "product_id": "6899ddfca959c6001142af63",
+      "user_id": "user-test-pending-1",
+      "user_name": "Alex Johnson",
+      "rating": 4,
+      "title": "Great eco-friendly option",
+      "review_body": "This silk dental floss is a great sustainable alternative. It works well and feels good to use. The packaging is beautiful too. I would recommend it to anyone looking for an environmentally friendly option.",
+      "status": "rejected",
+      "is_verified_purchase": true,
+      "created_at": "2025-08-12T12:00:00Z",
+      "updated_at": "2025-08-12T22:55:51.529Z",
+      "helpful_count": 0
+    },
+    {
+      "product_id": "6691a9fd1034680012078368",
+      "user_id": "65abc63b1a93b40012d9e9b2",
+      "user_name": "Adedayo Alao",
+      "rating": 5,
+      "title": "love it",
+      "review_body": "my go to floss",
+      "status": "approved",
+      "is_verified_purchase": true,
+      "id": "1",
+      "created_at": "2025-08-12T19:44:17.519Z",
+      "updated_at": "2025-08-12T22:39:51.123Z",
+      "helpful_count": 5
+    },
+    {
+      "product_id": "6691a9fd1034680012078368",
+      "user_id": "65abc63b1a93b40012d9e9b2",
+      "user_name": "Adedayo Alao",
+      "rating": 5,
+      "title": "new review",
+      "review_body": "new review 2",
+      "status": "rejected",
+      "is_verified_purchase": true,
+      "id": "2",
+      "created_at": "2025-08-12T19:55:25.608Z",
+      "updated_at": "2025-08-12T23:51:19.964Z",
+      "helpful_count": 0
+    },
+    {
+      "product_id": "6691b18f587ef300121585d8",
+      "user_id": "65abc63b1a93b40012d9e9b2",
+      "user_name": "Adedayo Alao",
+      "rating": 5,
+      "title": "i like it",
+      "review_body": "good for my razor",
+      "status": "approved",
+      "is_verified_purchase": true,
+      "id": "3",
+      "created_at": "2025-08-12T22:51:14.419Z",
+      "updated_at": "2025-08-12T23:50:16.513Z",
+      "helpful_count": 0
+    },
+    {
+      "product_id": "6691adcebde5570012895de5",
+      "user_id": "65abc63b1a93b40012d9e9b2",
+      "user_name": "Adedayo Alao",
+      "rating": 5,
+      "title": "love it",
+      "review_body": "love it",
+      "status": "pending",
+      "is_verified_purchase": true,
+      "images": [],
+      "id": "4",
+      "created_at": "2025-08-13T00:53:04.062Z",
+      "updated_at": "2025-08-13T00:53:04.062Z",
+      "helpful_count": 0
+    }
+  ],
+  "nextId": 5
+}

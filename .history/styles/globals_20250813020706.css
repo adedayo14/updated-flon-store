@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../public/fonts/Poppins-Regular.ttf') format('TrueType');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../public/fonts/Poppins-Italic.ttf') format('TrueType');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../public/fonts/Poppins-Medium.ttf') format('TrueType');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../public/fonts/Poppins-SemiBold.ttf') format('TrueType');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../public/fonts/Poppins-SemiBoldItalic.ttf') format('TrueType');
+}
+
+html,
+body {
+  @apply font-body antialiased;
+}
+
+.font-headings {
+  font-weight: var(--typography-font-weight-headings);
+}
+
+.font-body {
+  font-weight: var(--typography-font-weight-body);
+}
+
+.uppercase {
+  @apply tracking-wide;
+}
+
+.line-clamp > *,
+[class*='line-clamp-'] > * {
+  display: contents;
+}
+
+@layer utilities {
+  .all-ease-in-out-400 {
+    @apply transition-all duration-400 ease-in-out;
+  }
+
+  .rich-text-p-spacing-sm p {
+    @apply mb-4;
+  }
+
+  .rich-text-p-spacing-sm p:last-child {
+    @apply mb-0;
+  }
+
+  .path-fill-primary path {
+    @apply fill-primary;
+  }
+
+  .path-fill-background-primary path {
+    @apply fill-background-primary;
+  }
+
+  .straight-quotation {
+    quotes: '"' '"' "'" "'";
+  }
+
+  .safe-aspect-square {
+    @apply w-full pb-[100%];
+  }
+
+  .safe-aspect-4-3 {
+    @apply w-full pb-[75%]; /* 4:3 */
+  }
+
+  .safe-aspect-portrait {
+    @apply w-full pb-[133.33%]; /* 3:4 */
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    @apply hidden;
+  }
+
+  .decoration-skip-ink-none {
+    text-decoration-skip-ink: none;
+  }
+
+  /* Admin Review Button Styles */
+  .approve-btn {
+    background-color: #16a34a !important; /* green-600 */
+    color: white !important;
+  }
+  
+  .approve-btn:hover:not(:disabled) {
+    background-color: #15803d !important; /* green-700 */
+  }
+  
+  .approve-btn:active:not(:disabled) {
+    background-color: #166534 !important; /* green-800 */
+  }
+  
+  .reject-btn {
+    background-color: #dc2626 !important; /* red-600 */
+    color: white !important;
+  }
+  
+  .reject-btn:hover:not(:disabled) {
+    background-color: #b91c1c !important; /* red-700 */
+  }
+  
+  .reject-btn:active:not(:disabled) {
+    background-color: #991b1b !important; /* red-800 */
+  }
+  
+  .approve-btn:disabled,
+  .reject-btn:disabled {
+    background-color: #9ca3af !important; /* gray-400 */
+    color: white !important;
+    cursor: not-allowed !important;
+  }
+}
+
+/* Custom dropdown styles for review section */
+.dropdown-custom {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2314b8a6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+  background-position: right 0.75rem center !important;
+  background-repeat: no-repeat !important;
+  background-size: 1.25em 1.25em !important;
+  padding-right: 2.5rem !important;
+}
+
+.dropdown-custom option {
+  background-color: white !important;
+  color: #374151 !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid #14b8a6;
+}
+
+.dropdown-custom option:last-child {
+  border-bottom: none !important;
+}
+
+.dropdown-custom option:hover,
+.dropdown-custom option:focus {
+  background-color: #f0fdfa !important;
+  color: #0f766e !important;
+}
+
+.dropdown-custom:focus option:checked {
+  background-color: #14b8a6 !important;
+  color: white !important;
+}
+
+/* Custom teal stars */
+.star-teal {
+  color: #008080;
+}

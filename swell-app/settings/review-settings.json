@@ -1,0 +1,33 @@
+{
+  "review_settings": {
+    "auto_approve": false,
+    "require_verification": true,
+    "min_review_length": 50,
+    "max_review_length": 2000,
+    "allow_images": true,
+    "max_images_per_review": 5,
+    "helpful_threshold": 3,
+    "report_threshold": 3,
+    "moderation_required": true,
+    "email_notifications": {
+      "review_submitted": true,
+      "review_approved": true,
+      "review_rejected": true,
+      "review_reported": true
+    },
+    "guidelines": {
+      "prohibited_content": [
+        "Spam or promotional content",
+        "Offensive or inappropriate language",
+        "Personal information",
+        "Fake reviews",
+        "Reviews not based on actual experience"
+      ],
+      "required_elements": [
+        "Honest opinion based on experience",
+        "Appropriate language",
+        "Relevant to the product"
+      ]
+    }
+  }
+} 

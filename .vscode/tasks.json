@@ -1,0 +1,31 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Start Next.js dev server",
+			"command": "yarn dev",
+			"isBackground": true
+		},
+		{
+			"type": "shell",
+			"label": "Start Next.js on 3002",
+			"command": "yarn dev:3002",
+			"isBackground": true
+		},
+		{
+			"type": "shell",
+			"label": "Open app links (3002)",
+			"command": "sleep 6 && open 'http://localhost:3002' && open 'http://localhost:3002/admin/moderation'",
+			"isBackground": false
+		},
+		{
+			"label": "Start dev and open links",
+			"dependsOn": [
+				"Start Next.js on 3002",
+				"Open app links (3002)"
+			],
+			"dependsOrder": "sequence"
+		}
+	]
+}

@@ -1,0 +1,178 @@
+// Product service for managing product data and mapping IDs to names
+import { initSwell } from '../swell/swell-node';
+
+const swell = initSwell();
+
+export interface Product {
+  id: string;
+  name: string;
+  slug?: string;
+  description?: string;
+  price?: number;
+  currency?: string;
+  images?: Array<{ 
+    id: string;
+    file: {
+      id: string;
+      url: string;
+      filename: string;
+      content_type: string;
+      width: number;
+      height: number;
+    };
+  }>;
+  active?: boolean;
+  stock_status?: string | null;
+  stock_level?: number;
+  type?: string;
+  sku?: string | null;
+  sale?: boolean;
+  sale_price?: number | null;
+  stock_tracking?: boolean;
+  date_created?: string;
+  date_updated?: string;
+  category_index?: {
+    id: string[];
+    sort: Record<string, number>;
+  };
+  meta_title?: string | null;
+  meta_description?: string | null;
+  tags?: string[];
+  up_sells?: Array<{ id: string; product_id: string }>;
+  cross_sells?: Array<{ 
+    id: string; 
+    product_id: string;
+    discount_type?: string;
+    discount_amount?: number;
+  }>;
+  purchase_options?: {
+    standard?: {
+      active: boolean;
+      price: number;
+      sale: boolean;
+      sale_price: number | null;
+    };
+    subscription?: {
+      active: boolean;
+      plans: Array<{
+        id: string;
+        name: string;
+        price: number;
+        billing_schedule: {
+          interval: string;
+          interval_count: number;
+          limit: number | null;
+          trial_days: number;
+        };
+      }>;
+    };
+  };
+}
+
+/**
+ * Get all products from the store using Swell API
+ */
+
+export async function getAllProducts(): Promise<Product[]> {
+  try {
+    console.log('Fetching all products from Swell API...');
+    const response = await swell.products.list({
+      limit: 100,
+      page: 1
+    });
+    
+    console.log('Swell API response:', response);
+    
+    if (response && response.results) {
+      return response.results.map((product: any) => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        currency: product.currency,
+        images: product.images ? product.images.map((img: any) => ({
+          url: img.file?.url || img.url || '',
+          alt: img.alt || product.name
+        })) : [],
+        active: product.active,
+        stock_status: product.stock_status
+      }));
+    }
+    
+    console.warn('No products found from Swell API');
+    return [];
+  } catch (error) {
+    console.error('Error fetching products from Swell API:', error);
+    return [];
+  }
+}
+
+/**
+ * Get product by ID using Swell API
+ */
+export async function getProductById(id: string): Promise<Product | null> {
+  try {
+    console.log(`Fetching product ${id} from Swell API...`);
+    const product = await swell.products.get(id);
+    
+    if (product) {
+      return {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        currency: product.currency,
+        images: product.images ? product.images.map((img: any) => ({
+          url: img.file?.url || img.url || '',
+          alt: img.alt || product.name
+        })) : [],
+        active: product.active,
+        stock_status: product.stock_status
+      };
+    }
+    
+    console.warn(`Product ${id} not found in Swell`);
+    return null;
+  } catch (error) {
+    console.error(`Error fetching product ${id} from Swell API:`, error);
+    return null;
+  }
+}
+
+/**
+ * Get product name by ID (utility function)
+ */
+export async function getProductNameById(productId: string): Promise<string> {
+  const product = await getProductById(productId);
+  return product?.name || `Product ${productId}`;
+}
+
+/**
+ * Get all product IDs in the system
+ */
+export async function getAllProductIds(): Promise<string[]> {
+  const products = await getAllProducts();
+  return products.map(p => p.id);
+}
+
+/**
+ * Create a product ID to name mapping for efficient lookups
+ */
+export async function getProductNameMapping(): Promise<Map<string, string>> {
+  const products = await getAllProducts();
+  const mapping = new Map<string, string>();
+  
+  products.forEach(product => {
+    mapping.set(product.id, product.name);
+  });
+  
+  return mapping;
+}
+
+/**
+ * Get multiple products by their IDs
+ */
+export async function getProductsByIds(productIds: string[]): Promise<Product[]> {
+  const allProducts = await getAllProducts();
+  return allProducts.filter(product => productIds.includes(product.id));
+}

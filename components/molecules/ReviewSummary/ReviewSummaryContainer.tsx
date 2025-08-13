@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReviewSummaryProps } from '../../../types/shared/reviews';
+import type { ReviewSummaryProps } from '../../../types/shared/reviews';
 import ReviewSummary from './ReviewSummary';
 
 const ReviewSummaryContainer: React.FC<ReviewSummaryProps> = ({

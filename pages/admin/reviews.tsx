@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import { getProductsByIds } from 'lib/services/products';
 import { useRouter } from 'next/router';
-import { Review } from 'lib/services/reviews';
+import type { Review } from 'lib/services/reviews';
 import { validateAdminSession } from 'lib/auth/adminAuth';
 import fs from 'fs';
 import path from 'path';

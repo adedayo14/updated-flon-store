@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import ReviewCardEnhanced from 'components/molecules/ReviewCardEnhanced';
-import ReviewFilters from 'components/molecules/ReviewFilters';
+import ReviewFilters from 'components/molecules/ReviewFilters/ReviewFilters';
 import ReviewForm from 'components/molecules/ReviewForm';
 import Button from 'components/atoms/Button/Button';
 import { BUTTON_STYLE, BUTTON_TYPE } from 'types/shared/button';

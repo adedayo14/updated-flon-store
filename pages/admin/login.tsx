@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
+import type { GetServerSideProps } from 'next';
 import { validateAdminSession } from 'lib/auth/adminAuth';
 
 interface AdminLoginProps {
@@ -12,7 +11,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ error }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(error || '');
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +36,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ error }) => {
         const { success } = responseData;
         if (success) {
           console.log('Login successful, redirecting...');
-          router.push('/admin/reviews');
+          // Use window.location for hard refresh to ensure cookies are properly set
+          window.location.href = '/admin/reviews';
         } else {
           setLoginError('Invalid credentials');
         }

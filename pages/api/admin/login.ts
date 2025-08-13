@@ -28,7 +28,7 @@ export default async function handler(
       // Production: Secure + SameSite=Lax; Dev: SameSite=Strict (no Secure)
       const isProduction = process.env.NODE_ENV === 'production';
       const cookie = isProduction
-        ? `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600`
+        ? `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600; Domain=.flon.co.uk`
         : `admin-session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`;
 
       res.setHeader('Set-Cookie', cookie);

@@ -71,7 +71,7 @@ const initialReviewsData: ReviewsData = {
 };
 
 // Simple in-memory storage (will be replaced with proper database)
-let reviewsData: ReviewsData = { ...initialReviewsData };
+const reviewsData: ReviewsData = { ...initialReviewsData };
 
 export function getProductReviews(productId: string): Review[] {
   return reviewsData.reviews.filter(review => review.product_id === productId);

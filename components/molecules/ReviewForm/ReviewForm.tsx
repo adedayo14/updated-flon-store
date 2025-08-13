@@ -259,6 +259,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
               <div className="grid grid-cols-3 gap-2">
                 {images.map((file, index) => (
                   <div key={index} className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={URL.createObjectURL(file)}
                       alt={`Preview ${index + 1}`}

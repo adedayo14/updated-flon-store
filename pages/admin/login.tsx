@@ -38,7 +38,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ error }) => {
         const { success } = responseData;
         if (success) {
           console.log('Login successful, redirecting...');
-          router.push('/admin/moderation');
+          router.push('/admin/reviews');
         } else {
           setLoginError('Invalid credentials');
         }

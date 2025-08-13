@@ -23,20 +23,15 @@ export default async function handler(
 
     if (isValid) {
       const sessionId = createAdminSession();
-      
-      // Set session cookie with better compatibility for production
+
+      // Set a single host-only cookie (no Domain) for reliability
+      // Production: Secure + SameSite=Lax; Dev: SameSite=Strict (no Secure)
       const isProduction = process.env.NODE_ENV === 'production';
-      
-      if (isProduction) {
-        // Production settings for HTTPS
-        res.setHeader('Set-Cookie', [
-          `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600; Domain=flon.co.uk`,
-          `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600; Domain=.flon.co.uk`
-        ]);
-      } else {
-        // Development settings
-        res.setHeader('Set-Cookie', `admin-session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`);
-      }
+      const cookie = isProduction
+        ? `admin-session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600`
+        : `admin-session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`;
+
+      res.setHeader('Set-Cookie', cookie);
       
       return res.status(200).json({
         success: true,

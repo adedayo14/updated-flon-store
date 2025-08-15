@@ -24,7 +24,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   user_name,
   rating,
   comment,
-  date,
+  // date parameter removed - dates are hidden
   content_alignment = HORIZONTAL_ALIGNMENT.LEFT,
   ...props
 }) => {

@@ -11,7 +11,14 @@ interface CustomDropdownProps {
   options: DropdownOption[];
   value: string;
   onChange: (value: string) => void;
-  placeholder: string;
+  place  // Removed formatDate function - dates are hidden
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString).toLocaleDateString('en-US', {
+  //     year: 'numeric',
+  //     month: 'long', 
+  //     day: 'numeric'
+  //   });
+  // }; string;
   className?: string;
   isOpen: boolean;
   onToggle: () => void;
@@ -346,13 +353,14 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  // Removed formatDate function - dates are hidden
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString).toLocaleDateString('en-GB', {
+  //     year: 'numeric',
+  //     month: 'long',
+  //     day: 'numeric'
+  //   });
+  // };
 
   useEffect(() => {
     if (productId) {

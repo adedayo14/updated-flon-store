@@ -3,7 +3,6 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import ActionInput from 'components/molecules/ActionInput';
 import LinksAccordion from 'components/atoms/LinksAccordion';
-import { SECTION_MARGIN_MAP, SPACING } from 'lib/globals/sizings';
 import type { MandatoryImageProps } from 'types/global';
 import type { MenuItem } from 'components/organisms/Header';
 import type { SocialLinks, SOCIALS } from 'types/shared/socials';
@@ -74,7 +73,7 @@ export interface FooterProps {
   showNewsletter?: boolean;
   newsletterTitle?: string;
   newsletterPlaceholder?: string;
-  horizontalPadding?: SPACING;
+  // horizontalPadding?: SPACING; // Removed for full-width layout
   paymentMethods?: PaymentMethod[];
 }
 
@@ -87,7 +86,7 @@ const Footer: React.FC<FooterProps> = ({
   showNewsletter = true,
   newsletterTitle,
   newsletterPlaceholder,
-  horizontalPadding,
+  // horizontalPadding, // Removed for full-width layout
 }) => {
   const [newsLetterError, setNewsLetterError] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);

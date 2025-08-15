@@ -108,10 +108,16 @@ const AdminReviews: React.FC<AdminReviewsProps> = ({ reviews: initialReviews, pr
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
-  };
+  // Removed formatDate function - dates are hidden in admin
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString).toLocaleDateString('en-US', {
+  //     year: 'numeric',
+  //     month: 'short',
+  //     day: 'numeric',
+  //     hour: '2-digit',
+  //     minute: '2-digit'
+  //   });
+  // };
 
   const handleLogout = async () => {
     try {

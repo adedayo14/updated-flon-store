@@ -165,13 +165,14 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     return fullName.split(' ')[0] || fullName;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  // Removed formatDate function - dates are hidden
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString).toLocaleDateString('en-US', {
+  //     year: 'numeric',
+  //     month: 'long', 
+  //     day: 'numeric'
+  //   });
+  // };
 
   const submitReview = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

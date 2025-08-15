@@ -42,12 +42,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let hasPurchased = false;
     const eligibleOrders: Array<{id: string, date: string}> = [];
     
+    // Date filtering - only allow reviews for orders from August 15, 2025 onwards
+    const cutoffDate = new Date('2025-08-15T00:00:00.000Z');
+    
     try {
       const { data: ordersData } = await client.getOrders();
       const orders = ordersData?.orders?.results || [];
       
       for (const order of orders) {
         if (!order) continue;
+        
+        // Check if order is from the cutoff date onwards
+        const orderDate = new Date(order.dateCreated || '');
+        if (orderDate < cutoffDate) {
+          continue; // Skip orders before August 15, 2025
+        }
         
         const items = order?.items || [];
         const hasProduct = items.some((it: any) => it?.product?.id === productId);

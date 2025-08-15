@@ -451,9 +451,17 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
           onClick={() => setShowForm(false)}
         >
           <div 
-            className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Dismiss Button */}
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-2 right-2 w-8 h-8 rounded-full border-2 border-gray-300 bg-white hover:bg-gray-50 hover:border-gray-400 flex items-center justify-center text-gray-500 hover:text-gray-700 z-10 shadow-sm transition-colors duration-200"
+              aria-label="Close review form"
+            >
+              ×
+            </button>
             <ReviewForm
               product_id={productId}
               product_name={productName}

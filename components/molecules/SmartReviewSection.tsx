@@ -562,9 +562,9 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
                         <span className="text-xs text-gray-500">Verified Buyer</span>
                       )}
                     </div>
-                    <time className="text-sm text-gray-600">
+                    {/* <time className="text-sm text-gray-600">
                       {formatDate(review.created_at)}
-                    </time>
+                    </time> */}
                   </div>
                 </div>
 

@@ -262,7 +262,7 @@ const AdminReviews: React.FC<AdminReviewsProps> = ({ reviews: initialReviews, pr
                     <div className="flex-1 mb-4">
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">{review.title}</h3>
                       <p className="text-sm text-gray-600 mb-3">
-                        by {review.user_name} • {formatDate(review.created_at)}
+                        by {review.user_name} {/* • {formatDate(review.created_at)} */}
                       </p>
                       <p className="text-gray-700 leading-relaxed line-clamp-3">{review.review_body}</p>
                     </div>
@@ -454,7 +454,7 @@ const AdminReviews: React.FC<AdminReviewsProps> = ({ reviews: initialReviews, pr
                         )}
                       </td>
                       <td className="px-3 py-2 text-xs text-gray-500">
-                        {formatDate(review.created_at)}
+                        {/* {formatDate(review.created_at)} */}
                       </td>
                       <td className="px-3 py-2">
                         <div className="flex items-center justify-end gap-2">

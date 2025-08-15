@@ -451,7 +451,7 @@ const ProductsLayout: React.FC<ProductsLayoutProps> = ({
             columns={3}
             items={liveSettings.featuredCategories}
           />
-          <hr className="mt-4 hidden w-full bg-dividers lg:block" />
+          {/* Removed colored divider bar after featured categories */}
         </>
       ) : null}
 

@@ -90,44 +90,58 @@ const Footer: React.FC<FooterProps> = ({
   horizontalPadding,
 }) => {
   const [newsLetterError, setNewsLetterError] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const onChange = useCallback(() => setNewsLetterError(''), []);
-  const onAction = useCallback((value: string) => {
+  const onAction = useCallback(async (value: string) => {
+    setSuccessMessage(null);
     if (!value) {
       setNewsLetterError('Please enter your email');
       return;
     }
 
-    // Validate if email is valid
     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
       setNewsLetterError('Please enter a valid email address');
       return;
     }
-    // TODO: Handle submit (email: string) => void;
-    console.log(value);
+
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: value }),
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      setSuccessMessage('Thanks! You are subscribed.');
+    } catch (e) {
+      setNewsLetterError('Subscription failed. Please try again later.');
+    }
   }, []);
 
   return (
-    <footer
-      className={`${
-        SECTION_MARGIN_MAP[horizontalPadding ?? SPACING.MEDIUM]
-      } bg-background-primary pb-6 pt-14`}>
-      {/* Footer main content */}
-      {(!!menu?.length || showNewsletter) && (
-        <div className="lg:flex lg:justify-between">
-          {/* Footer links columns */}
-          <MobileColumns columns={menu} />
-          <DesktopColumns columns={menu} />
-          {/* Newsletter */}
-          {showNewsletter && (
-            <div className="mt-8 lg:mt-0 lg:max-w-lg">
-              <h3
-                className="font-headings text-5xl font-semibold text-primary"
-                dangerouslySetInnerHTML={{
-                  __html: newsletterTitle ?? "Let's keep in touch",
-                }}></h3>
+    <footer className="w-full bg-background-secondary pb-6 pt-14">
+      <div className="px-6 lg:px-8">
+        {/* Footer main content */}
+        {(!!menu?.length || showNewsletter) && (
+          <div className="lg:flex lg:justify-between lg:items-start">
+            {/* Footer links columns */}
+            <div className="lg:flex-1">
+              <MobileColumns columns={menu} />
+              <DesktopColumns columns={menu} />
+            </div>
+            {/* Newsletter */}
+            {showNewsletter && (
+              <div className="mt-8 lg:mt-0 lg:max-w-lg lg:flex-shrink-0">
+                <h3
+                  className="font-headings text-2xl font-semibold text-primary md:text-3xl"
+                  dangerouslySetInnerHTML={{
+                    __html: newsletterTitle ?? "Let's keep in touch.",
+                  }}></h3>
 
-              <div className="mt-4">
+              <div className="mt-4 lg:w-fit">
+                {successMessage ? (
+                  <div className="rounded-md bg-green-50 p-4 text-sm text-green-900">{successMessage}</div>
+                ) : (
                 <ActionInput
                   id="email-newsletter"
                   type="email"
@@ -138,68 +152,72 @@ const Footer: React.FC<FooterProps> = ({
                   errorLabel={newsLetterError}
                   onAction={onAction}
                   noValidate
+                  small
+                  className="w-56 md:w-64"
                 />
+                )}
               </div>
             </div>
           )}
         </div>
       )}
 
-      {/* Second footer section */}
-      <div className="mt-10 flex flex-col items-center gap-6 lg:mt-18 lg:flex-row lg:justify-end lg:gap-0">
-        {/* Payment methods, temporarily disabled */}
-        {/* {false && !!paymentMethods?.length && (
-          <div className="flex gap-2 lg:gap-4">
-            {paymentMethods.map((paymentMethod) => (
-              <Image
-                key={paymentMethod.name}
-                title={paymentMethod.name}
-                {...paymentMethod.icon}
-                alt={paymentMethod.icon.alt}
-              />
-            ))}
-          </div>
-        )} */}
+        {/* Second footer section */}
+        <div className="mt-10 flex flex-col items-center gap-6 lg:mt-18 lg:flex-row lg:justify-end lg:gap-0">
+          {/* Payment methods, temporarily disabled */}
+          {/* {false && !!paymentMethods?.length && (
+            <div className="flex gap-2 lg:gap-4">
+              {paymentMethods.map((paymentMethod) => (
+                <Image
+                  key={paymentMethod.name}
+                  title={paymentMethod.name}
+                  {...paymentMethod.icon}
+                  alt={paymentMethod.icon.alt}
+                />
+              ))}
+            </div>
+          )} */}
 
-        {/* Social links */}
-        {showSocials && typeof socialLinks === 'object' && (
-          <div className="flex gap-4">
-            {Object.entries(socialLinks).map(
-              ([key, value]) =>
-                value.show &&
-                !!value.url && (
-                  <Link key={key} href={value.url}>
-                    <a className="leading-none text-primary">
-                      {SOCIAL_ICONS_MAP[key as SOCIALS]}
-                    </a>
-                  </Link>
-                ),
-            )}
-          </div>
-        )}
-      </div>
+          {/* Social links */}
+          {showSocials && typeof socialLinks === 'object' && (
+            <div className="flex gap-4">
+              {Object.entries(socialLinks).map(
+                ([key, value]) =>
+                  value.show &&
+                  !!value.url && (
+                    <Link key={key} href={value.url}>
+                      <a className="leading-none text-primary">
+                        {SOCIAL_ICONS_MAP[key as SOCIALS]}
+                      </a>
+                    </Link>
+                  ),
+              )}
+            </div>
+          )}
+        </div>
 
-      {/* Third footer section */}
-      <div className="mt-6 lg:flex lg:flex-row-reverse lg:justify-between">
-        {!!secondaryMenu?.length && (
-          <div className="flex justify-between lg:justify-start lg:gap-8">
-            {secondaryMenu.map((item) => (
-              <Link key={item.id} href={item.link}>
-                <a className="whitespace-nowrap text-center text-2xs text-primary lg:text-sm">
-                  {item.label}
-                </a>
-              </Link>
-            ))}
-          </div>
-        )}
+        {/* Third footer section */}
+        <div className="mt-6 lg:flex lg:flex-row-reverse lg:justify-between">
+          {!!secondaryMenu?.length && (
+            <div className="flex justify-between lg:justify-start lg:gap-8">
+              {secondaryMenu.map((item) => (
+                <Link key={item.id} href={item.link}>
+                  <a className="whitespace-nowrap text-center text-2xs text-primary lg:text-sm">
+                    {item.label}
+                  </a>
+                </Link>
+              ))}
+            </div>
+          )}
 
-        {!!copyrightText && (
-          <div
-            className="mt-6 text-center text-2xs text-primary lg:mt-0 lg:text-sm"
-            dangerouslySetInnerHTML={{
-              __html: `${copyrightText} ${PROMO_TEXT}`,
-            }}></div>
-        )}
+          {!!copyrightText && (
+            <div
+              className="mt-6 text-center text-2xs text-primary lg:mt-0 lg:text-sm"
+              dangerouslySetInnerHTML={{
+                __html: `${copyrightText} ${PROMO_TEXT}`,
+              }}></div>
+          )}
+        </div>
       </div>
     </footer>
   );

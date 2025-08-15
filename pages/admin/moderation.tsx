@@ -233,7 +233,7 @@ const AdminModerationPage: NextPage = () => {
                   <td className="px-3 py-2 max-w-xs">
                     <div className="line-clamp-3">{item.review.review_body}</div>
                   </td>
-                  <td className="px-3 py-2">{new Date(item.review.created_at).toLocaleString()}</td>
+                  <td className="px-3 py-2">{/* {new Date(item.review.created_at).toLocaleString()} */}</td>
                   <td className="px-3 py-2 capitalize">{item.review.status}</td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">

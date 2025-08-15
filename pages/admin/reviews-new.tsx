@@ -127,7 +127,7 @@ const AdminReviews: React.FC<AdminReviewsProps> = ({ reviews: initialReviews }) 
                       <div className="mb-2">
                         <h3 className="text-lg font-semibold text-gray-900">{review.title}</h3>
                         <p className="text-sm text-gray-600 mb-2">
-                          by {review.user_name} • {formatDate(review.created_at)}
+                          by {review.user_name} {/* • {formatDate(review.created_at)} */}
                         </p>
                       </div>
 

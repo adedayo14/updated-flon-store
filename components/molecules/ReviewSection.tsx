@@ -321,7 +321,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                   </div>
                   <h4 className="font-semibold text-lg">{review.title}</h4>
                 </div>
-                <span className="text-sm text-gray-500 pr-3">{formatDate(review.created_at)}</span>
+                {/* <span className="text-sm text-gray-500 pr-3">{formatDate(review.created_at)}</span> */}
               </div>
               
               <p className="text-gray-700 mb-2">{review.review_body}</p>

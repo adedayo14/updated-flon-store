@@ -69,9 +69,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         <div className="mt-4 flex-1 text-sm text-body">
           <RichText content={comment ?? ''} />
         </div>
-        {date && (
+        {/* date && (
           <time className="mt-4 inline-block text-xs text-body">{date}</time>
-        )}
+        ) */}
       </div>
     </div>
   );

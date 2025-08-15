@@ -22,6 +22,7 @@ export interface ActionInputProps extends React.AriaAttributes {
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>;
   onKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
   noValidate?: boolean;
+  className?: string;
 }
 
 const ActionInput: React.FC<ActionInputProps> = ({
@@ -32,6 +33,7 @@ const ActionInput: React.FC<ActionInputProps> = ({
   value,
   defaultValue = '',
   noValidate,
+  className,
   ...props
 }) => {
   const inputClassNames = useClassNames({
@@ -71,7 +73,7 @@ const ActionInput: React.FC<ActionInputProps> = ({
       className="gap flex flex-col gap-1"
       onSubmit={submitHandler}
       noValidate={noValidate}>
-      <div className="relative">
+  <div className={`relative ${className ?? ''}`}>
         <Input
           aria-describedby={`${id}-error`}
           className={inputClassNames}
@@ -80,7 +82,7 @@ const ActionInput: React.FC<ActionInputProps> = ({
           error={!!errorLabel}
           {...props}
         />
-        <button type="submit" className={buttonClassNames}>
+  <button type="submit" className={buttonClassNames} aria-label="Submit newsletter email">
           <ArrowRight />
         </button>
       </div>

@@ -24,11 +24,19 @@ export interface DividerProps {
 const Divider: React.FC<DividerProps> = ({
   vertical_spacing = DIVIDER_HEIGHT.SMALL,
   background_color,
-}) => (
-  <hr
-    style={{ backgroundColor: background_color }}
-    className={`border-transparent ${DIVIDER_HEIGHT_PADDING_MAP[vertical_spacing]}`}
-  />
-);
+}) => {
+  // Don't render the divider if it has the specific unwanted background color
+  const normalized = background_color?.toLowerCase();
+  if (normalized === '#ecf2f2' || normalized === 'rgb(236, 242, 242)') {
+    return null;
+  }
+  
+  return (
+    <hr
+      style={{ backgroundColor: background_color }}
+      className={`border-transparent ${DIVIDER_HEIGHT_PADDING_MAP[vertical_spacing]}`}
+    />
+  );
+};
 
 export default Divider;

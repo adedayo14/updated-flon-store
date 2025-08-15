@@ -33,6 +33,16 @@ export default async function handler(
         return res.status(404).json({ error: 'Review not found' });
       }
 
+      // Trigger revalidation of pages that might display reviews
+      try {
+        await res.revalidate('/'); // Homepage
+        await res.revalidate('/products'); // Products page
+        // You might also want to revalidate specific product pages that had this review
+      } catch (err) {
+        console.warn('Failed to revalidate pages after review deletion:', err);
+        // Don't fail the request if revalidation fails
+      }
+
       return res.status(200).json({ 
         message: 'Review deleted successfully'
       });

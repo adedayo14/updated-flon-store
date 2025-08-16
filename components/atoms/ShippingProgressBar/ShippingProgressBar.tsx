@@ -40,9 +40,9 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
       <div className="w-full bg-dividers rounded-full h-2 mb-2">
         <div 
           className={`h-2 rounded-full transition-all duration-500 ease-out ${
-            hasQualified ? 'bg-green-500 w-full' : 'bg-accent'
+            hasQualified ? 'bg-green-500' : 'bg-accent'
           }`}
-          {...(!hasQualified && { style: { width: `${progress}%` } })}
+          style={{ width: hasQualified ? '100%' : `${progress}%` }}
         />
       </div>
       

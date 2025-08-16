@@ -39,6 +39,7 @@
     "@radix-ui/react-tooltip": "^0.1.7",
     "click-to-react-component": "^1.0.7",
     "cookie": "^0.4.2",
+    "csv-parser": "^3.2.0",
     "framer-motion": "^6.3.4",
     "google-fonts-helper": "^3.6.0",
     "graphql": "^16.3.0",

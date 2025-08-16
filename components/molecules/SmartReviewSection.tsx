@@ -567,7 +567,9 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
                         {getFirstName(review.user_name)}
                       </span>
                       {review.is_verified_purchase && (
-                        <span className="text-xs text-gray-500">Verified Buyer</span>
+                        <span className="inline-block px-2 py-1 text-xs font-medium text-white bg-green-600 rounded">
+                          Verified Buyer
+                        </span>
                       )}
                     </div>
                     {/* <time className="text-sm text-gray-600">

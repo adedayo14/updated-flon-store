@@ -164,6 +164,7 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
   } | null>(null);
   const [helpfulVotes, setHelpfulVotes] = useState<Record<string, boolean>>({});
   const [openDropdown, setOpenDropdown] = useState<'rating' | 'sort' | null>(null);
+  const [visibleReviews, setVisibleReviews] = useState(10);
 
   // Load helpful votes from localStorage on mount
   useEffect(() => {
@@ -228,6 +229,16 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
 
     return filtered;
   }, [reviews, searchTerm, ratingFilter, sortBy]);
+
+  // Show More logic
+  const totalReviews = filteredAndSortedReviews.length;
+  const displayedReviews = filteredAndSortedReviews.slice(0, visibleReviews);
+  const hasMoreReviews = visibleReviews < totalReviews;
+
+  // Reset visible reviews when filters change
+  useEffect(() => {
+    setVisibleReviews(10);
+  }, [searchTerm, ratingFilter, sortBy]);
 
   const fetchReviews = useCallback(async () => {
     try {
@@ -475,11 +486,13 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
 
       {/* Controls */}
       <div className="px-4 sm:px-8 lg:px-16 mb-8">
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 items-center flex-wrap">
           {/* Search */}
-          <div className="flex-1 relative">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
-              🔍
+          <div className="flex-1 min-w-60 relative">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
             </div>
             <input
               type="search"
@@ -521,8 +534,8 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
             options={[
               { value: 'helpful', label: 'Most helpful' },
               { value: 'recent', label: 'Most recent' },
-              { value: 'rating_high', label: 'Highest rating' },
-              { value: 'rating_low', label: 'Lowest rating' }
+              { value: 'rating_high', label: 'Highest rated' },
+              { value: 'rating_low', label: 'Lowest rated' }
             ]}
           />
         </div>
@@ -540,61 +553,82 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {filteredAndSortedReviews.map((review) => (
-              <article
-                key={review.id}
-                className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
-              >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                  <div className="flex flex-col gap-2">
-                    <FractionalStars rating={review.rating} />
-                    <h3 className="font-semibold text-gray-900 uppercase tracking-wide text-sm">
-                      {review.title}
-                    </h3>
-                  </div>
-                  
-                  <div className="text-right md:min-w-48">
-                    <div className="flex flex-col items-end gap-1 mb-2">
-                      <span className="font-semibold text-gray-900 text-sm">
-                        {getFirstName(review.user_name)}
-                      </span>
-                      {review.is_verified_purchase && (
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 border border-green-200 rounded">
-                          Verified Buyer
-                        </span>
-                      )}
+          <>
+            <div className="space-y-6">
+              {displayedReviews.map((review) => (
+                <article
+                  key={review.id}
+                  className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+                    <div className="flex flex-col gap-2">
+                      <FractionalStars rating={review.rating} />
+                      <h3 className="font-semibold text-gray-900 uppercase tracking-wide text-sm">
+                        {review.title}
+                      </h3>
                     </div>
-                    {/* <time className="text-sm text-gray-600">
-                      {formatDate(review.created_at)}
-                    </time> */}
+                    
+                    <div className="text-right md:min-w-48">
+                      <div className="flex flex-col items-end gap-1 mb-2">
+                        <span className="font-semibold text-gray-900 text-sm">
+                          {getFirstName(review.user_name)}
+                        </span>
+                        {review.is_verified_purchase && (
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 border border-green-200 rounded">
+                            Verified Buyer
+                          </span>
+                        )}
+                      </div>
+                      {/* <time className="text-sm text-gray-600">
+                        {formatDate(review.created_at)}
+                      </time> */}
+                    </div>
                   </div>
-                </div>
 
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  {review.review_body}
-                </p>
+                  <p className="text-gray-700 leading-relaxed mb-4">
+                    {review.review_body}
+                  </p>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-600">
-                    <span className="font-medium">{review.helpful_count}</span> 
-                    {review.helpful_count === 1 ? ' person' : ' people'} found this helpful
-                  </span>
-                  
-                  <button
-                    onClick={() => handleHelpfulVote(review.id)}
-                    className={`text-sm transition-colors ${
-                      helpfulVotes[review.id]
-                        ? 'text-teal-700 font-semibold'
-                        : 'text-teal-600 hover:text-teal-700 hover:underline'
-                    }`}
-                  >
-                    {helpfulVotes[review.id] ? '✓ Helpful' : 'Helpful'}
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <span className="text-sm text-gray-600">
+                      <span className="font-medium">{review.helpful_count}</span> 
+                      {review.helpful_count === 1 ? ' person' : ' people'} found this helpful
+                    </span>
+                    
+                    <button
+                      onClick={() => handleHelpfulVote(review.id)}
+                      className={`text-sm transition-colors ${
+                        helpfulVotes[review.id]
+                          ? 'text-teal-700 font-semibold'
+                          : 'text-teal-600 hover:text-teal-700 hover:underline'
+                      }`}
+                    >
+                      {helpfulVotes[review.id] ? '✓ Helpful' : 'Helpful'}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Show More Button */}
+            {hasMoreReviews && (
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setVisibleReviews(prev => prev + 10)}
+                  className="px-6 py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-colors"
+                >
+                  Show More Reviews
+                </button>
+              </div>
+            )}
+
+            {/* Show summary when all reviews are displayed */}
+            {!hasMoreReviews && totalReviews > 10 && (
+              <div className="mt-8 text-center text-sm text-gray-600">
+                Showing all {totalReviews} reviews
+              </div>
+            )}
+          </>
         )}
       </div>
       </div>

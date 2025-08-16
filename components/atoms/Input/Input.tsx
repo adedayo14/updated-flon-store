@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
 
     return (
-      <span className={`relative inline-block ${props.className ?? ''}`}>
+      <span className={`relative ${props.className ?? ''}`}>
         <input
           {...props}
           placeholder={props.placeholder || ' '}

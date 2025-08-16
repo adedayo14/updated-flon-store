@@ -315,7 +315,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                     </div>
                     <span className="font-semibold">{getFirstName(review.user_name)}</span>
                     {review.is_verified_purchase && (
-                      <span className="inline-block px-2 py-1 text-xs font-medium text-white bg-green-600 rounded">
+                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 border border-green-200 rounded">
                         Verified Buyer
                       </span>
                     )}

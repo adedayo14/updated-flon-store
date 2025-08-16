@@ -325,7 +325,9 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                 {/* <span className="text-sm text-gray-500 pr-3">{formatDate(review.created_at)}</span> */}
               </div>
               
-              <p className="text-gray-700 mb-2">{review.review_body}</p>
+              {review.review_body && review.review_body.trim() && review.review_body.toLowerCase() !== 'no text review' && (
+                <p className="text-gray-700 mb-2">{review.review_body}</p>
+              )}
               
               <div className="flex items-center justify-between mt-2">
                 {review.helpful_count > 0 ? (

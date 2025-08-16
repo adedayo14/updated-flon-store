@@ -48,8 +48,8 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
       
       <p className="text-xs text-body">
         {hasQualified 
-          ? 'Free UK delivery has been applied.'
-          : `${formatPrice(remaining)} away from free UK delivery.`
+          ? "Great choice, delivery's on us"
+          : `${formatPrice(remaining)} more and your delivery is on us`
         }
       </p>
     </div>

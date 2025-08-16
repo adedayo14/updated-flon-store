@@ -48,9 +48,11 @@ const ReviewCardEnhanced: React.FC<ReviewCardProps> = ({
             {getStarDisplay(rating)}
           </div>
           <h3 className="font-semibold text-lg mb-3">{title}</h3>
-          <p className="text-gray-700 text-base leading-relaxed">
-            {review_body}
-          </p>
+          {review_body && review_body.trim() && review_body.toLowerCase() !== 'no text review' && (
+            <p className="text-gray-700 text-base leading-relaxed">
+              {review_body}
+            </p>
+          )}
         </div>
         
         <div className="flex flex-col items-start flex-shrink-0 w-40">

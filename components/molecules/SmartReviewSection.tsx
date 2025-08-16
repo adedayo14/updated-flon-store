@@ -151,7 +151,7 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [ratingFilter, setRatingFilter] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'helpful' | 'recent' | 'rating_high' | 'rating_low'>('helpful');
+  const [sortBy, setSortBy] = useState<'helpful' | 'recent' | 'rating_high' | 'rating_low'>('rating_high');
   const [showForm, setShowForm] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<string>(''); // Track selected order for review
   const [eligibility, setEligibility] = useState<{ 
@@ -486,7 +486,66 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
 
       {/* Controls */}
       <div className="px-4 sm:px-8 lg:px-16 mb-8">
-        <div className="flex gap-3 items-center flex-wrap">
+        {/* Mobile: Search on first row, filters on second row */}
+        <div className="md:hidden space-y-3">
+          {/* Search - First row on mobile */}
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+            <input
+              type="search"
+              placeholder="Search reviews"
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          {/* Filters - Second row on mobile, all in one row */}
+          <div className="flex gap-3 items-center">
+            {/* Rating Filter */}
+            <CustomDropdown
+              className="flex-1"
+              placeholder="Ratings"
+              value={ratingFilter}
+              onChange={setRatingFilter}
+              isOpen={openDropdown === 'rating'}
+              onToggle={() => setOpenDropdown(openDropdown === 'rating' ? null : 'rating')}
+              onClose={() => setOpenDropdown(null)}
+              options={[
+                { value: '', label: 'Ratings' },
+                { value: '5', label: '★★★★★' },
+                { value: '4', label: '★★★★☆' },
+                { value: '3', label: '★★★☆☆' },
+                { value: '2', label: '★★☆☆☆' },
+                { value: '1', label: '★☆☆☆☆' }
+              ]}
+            />
+
+            {/* Sort */}
+            <CustomDropdown
+              className="flex-1"
+              placeholder="Sort"
+              value={sortBy}
+              onChange={(value) => setSortBy(value as any)}
+              isOpen={openDropdown === 'sort'}
+              onToggle={() => setOpenDropdown(openDropdown === 'sort' ? null : 'sort')}
+              onClose={() => setOpenDropdown(null)}
+              options={[
+                { value: 'helpful', label: 'Most helpful' },
+                { value: 'recent', label: 'Most recent' },
+                { value: 'rating_high', label: 'Highest rated' },
+                { value: 'rating_low', label: 'Lowest rated' }
+              ]}
+            />
+          </div>
+        </div>
+
+        {/* Desktop: All in one row */}
+        <div className="hidden md:flex gap-3 items-center flex-wrap">
           {/* Search */}
           <div className="flex-1 min-w-60 relative">
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -585,19 +644,23 @@ const SmartReviewSection: React.FC<SmartReviewSectionProps> = ({ productId, prod
                     </div>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    {review.review_body}
-                  </p>
+                  {review.review_body && review.review_body.trim() && review.review_body.toLowerCase() !== 'no text review' && (
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      {review.review_body}
+                    </p>
+                  )}
 
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-sm text-gray-600">
-                      <span className="font-medium">{review.helpful_count}</span> 
-                      {review.helpful_count === 1 ? ' person' : ' people'} found this helpful
-                    </span>
+                    {review.helpful_count > 0 && (
+                      <span className="text-sm text-gray-600">
+                        <span className="font-medium">{review.helpful_count}</span> 
+                        {review.helpful_count === 1 ? ' person' : ' people'} found this helpful
+                      </span>
+                    )}
                     
                     <button
                       onClick={() => handleHelpfulVote(review.id)}
-                      className={`text-sm transition-colors ${
+                      className={`text-sm transition-colors ${review.helpful_count === 0 ? 'ml-auto' : ''} ${
                         helpfulVotes[review.id]
                           ? 'text-teal-700 font-semibold'
                           : 'text-teal-600 hover:text-teal-700 hover:underline'

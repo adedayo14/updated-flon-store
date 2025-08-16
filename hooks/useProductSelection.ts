@@ -89,7 +89,7 @@ const useProductSelection = ({
   isGiftCard = false,
   shouldPreselectOption = true,
 }: UseProductSelectionArgs) => {
-  const initialState = {
+  const getInitialState = useCallback((): ReducerState => ({
     selectedPurchaseOption: (() => {
       // TODO: Handle null option better here
       const { standard, subscription } = purchaseOptions;
@@ -117,7 +117,9 @@ const useProductSelection = ({
       return options;
     })(),
     textProductOptions: new Map<string, string>(),
-  };
+  }), [productOptions, purchaseOptions, isGiftCard, shouldPreselectOption]);
+
+  const initialState = getInitialState();
 
   function reducer(state: ReducerState, action: Action): ReducerState {
     switch (action.type) {
@@ -187,7 +189,7 @@ const useProductSelection = ({
         };
       }
       case ACTIONS.RESET_STATE: {
-        return initialState;
+        return getInitialState();
       }
       default:
         throw new Error();
@@ -264,6 +266,14 @@ const useProductSelection = ({
       }),
     [state.selectedProductOptions],
   );
+
+  // Reset state when productId changes (when navigating to a different product)
+  useEffect(() => {
+    dispatch({
+      type: ACTIONS.RESET_STATE,
+      payload: undefined,
+    });
+  }, [productId]);
 
   const _addToCart = useCartStore((store) => store.addToCart);
 

@@ -33,6 +33,11 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
   const progress = Math.min(100, (currentTotal / freeShippingThreshold) * 100);
   const hasQualified = remaining === 0;
 
+  // Create inline style only when needed
+  const progressStyle = !hasQualified ? 
+    { width: `${Math.max(0, Math.min(100, progress))}%` } : 
+    {};
+
   return (
     <div className={`bg-background-secondary rounded-lg p-4 ${className ?? ''}`}>
       <div className="flex items-center justify-between mb-2">
@@ -51,7 +56,7 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
           className={`h-2 rounded-full transition-all duration-500 ease-out ${
             hasQualified ? 'bg-green-500 w-full' : 'bg-accent'
           }`}
-          style={!hasQualified ? { width: `${progress}%` } : undefined}
+          style={progressStyle}
         />
       </div>
       

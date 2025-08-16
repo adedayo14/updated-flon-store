@@ -1,34 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useCurrency from 'stores/currency';
+import useLocationStore from 'stores/location';
 
 export interface ShippingProgressBarProps {
   currentTotal: number;
-  freeShippingThreshold: number;
-  isUKOrder?: boolean;
   className?: string;
 }
 
 const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
   currentTotal,
-  freeShippingThreshold,
-  isUKOrder = true,
   className,
 }) => {
   const formatPrice = useCurrency((store: any) => store.formatPrice);
+  const currency = useCurrency((store: any) => store.currency);
+  const { location, detectLocation, getDeliveryThreshold } = useLocationStore();
+
+  // Detect location on component mount if not already detected
+  useEffect(() => {
+    if (!location.detected) {
+      detectLocation();
+    }
+  }, [location.detected, detectLocation]);
+
+  const baseThreshold = getDeliveryThreshold(); // £30 for UK, £100 for international
+  
+  // Convert threshold to current currency if not GBP
+  const freeShippingThreshold = currency.code === 'GBP' 
+    ? baseThreshold 
+    : Math.round(baseThreshold * 1.25); // Rough conversion rate for non-GBP currencies
   
   const remaining = Math.max(0, freeShippingThreshold - currentTotal);
   const progress = Math.min(100, (currentTotal / freeShippingThreshold) * 100);
   const hasQualified = remaining === 0;
 
-  if (!isUKOrder) {
-    return null; // Only show for UK orders
-  }
-
   return (
     <div className={`bg-background-secondary rounded-lg p-4 ${className ?? ''}`}>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-primary">
-          Free UK delivery
+          {location.isUK ? 'Free UK delivery' : 'Free delivery'}
         </span>
         {!hasQualified && (
           <span className="text-sm font-semibold text-primary">
@@ -40,9 +49,9 @@ const ShippingProgressBar: React.FC<ShippingProgressBarProps> = ({
       <div className="w-full bg-dividers rounded-full h-2 mb-2">
         <div 
           className={`h-2 rounded-full transition-all duration-500 ease-out ${
-            hasQualified ? 'bg-green-500' : 'bg-accent'
+            hasQualified ? 'bg-green-500 w-full' : 'bg-accent'
           }`}
-          style={{ width: hasQualified ? '100%' : `${progress}%` }}
+          style={!hasQualified ? { width: `${progress}%` } : undefined}
         />
       </div>
       

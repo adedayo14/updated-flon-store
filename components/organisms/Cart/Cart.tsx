@@ -64,8 +64,6 @@ const Cart: React.FC<CartProps> = ({
             />
             <ShippingProgressBar 
               currentTotal={total}
-              freeShippingThreshold={30}
-              isUKOrder={true}
               className="mb-6" 
             />
             <ul>

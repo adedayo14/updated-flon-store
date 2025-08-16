@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import Button from 'components/atoms/Button';
 import Input from 'components/atoms/Input';
 import Textarea from 'components/atoms/Textarea';
-import { BUTTON_STYLE } from 'types/shared/button';
+import { BUTTON_STYLE, BUTTON_TYPE } from 'types/shared/button';
 import type { ReviewFormProps, CreateReviewRequest, Rating } from 'types/shared/reviews';
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -243,6 +243,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             />
             <Button
               type="button"
+              elType={BUTTON_TYPE.BUTTON}
               buttonStyle={BUTTON_STYLE.SECONDARY}
               onClick={() => fileInputRef.current?.click()}
               disabled={images.length >= 5}
@@ -290,6 +291,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         <div className="flex gap-3 justify-end pt-4 border-t">
           <Button
             type="button"
+            elType={BUTTON_TYPE.BUTTON}
             buttonStyle={BUTTON_STYLE.SECONDARY}
             onClick={onCancel}
             disabled={isSubmitting}
@@ -298,6 +300,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           </Button>
           <Button
             type="submit"
+            elType={BUTTON_TYPE.BUTTON}
             buttonStyle={BUTTON_STYLE.PRIMARY}
             disabled={isSubmitting || !rating}
           >

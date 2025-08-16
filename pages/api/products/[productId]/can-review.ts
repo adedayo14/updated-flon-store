@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { initSwell } from 'lib/swell/swell-node';
 import fs from 'fs';
 import path from 'path';

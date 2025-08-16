@@ -11,14 +11,7 @@ interface CustomDropdownProps {
   options: DropdownOption[];
   value: string;
   onChange: (value: string) => void;
-  place  // Removed formatDate function - dates are hidden
-  // const formatDate = (dateString: string) => {
-  //   return new Date(dateString).toLocaleDateString('en-US', {
-  //     year: 'numeric',
-  //     month: 'long', 
-  //     day: 'numeric'
-  //   });
-  // }; string;
+  placeholder?: string;
   className?: string;
   isOpen: boolean;
   onToggle: () => void;

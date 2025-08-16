@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 // Admin dashboard - redirect to moderation page where the actual admin functionality is
 const AdminDashboard = () => {

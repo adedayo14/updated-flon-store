@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { validateAdminSession } from '../../../../../lib/auth/adminAuth';
 import { deleteReview } from '../../../../../lib/services/reviews-server';
 

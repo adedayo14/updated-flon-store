@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { getClientWithSessionToken } from 'lib/graphql/client';
 import fs from 'fs';
 import path from 'path';

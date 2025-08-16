@@ -30,7 +30,7 @@ Default.args = {
   returnLabel: 'Create return',
   returnDialogTitle: 'Returning an item',
   returnDialogBody:
-    'To initiate a partial or complete return of an order, please contact us at <a href="mailto:returns@horizon.com">returns@horizon.com</a> so we can start the return process. Don’t forget to include the order number and the reason for returning.',
+    'To initiate a partial or complete return of an order, please contact us at <a href="mailto:sales@flon.co.uk">sales@flon.co.uk</a> so we can start the return process. Don’t forget to include the order number and the reason for returning.',
   leftColumn: [
     ['Order date', formatDateToLocale(new Date())],
     ['Items', 5],

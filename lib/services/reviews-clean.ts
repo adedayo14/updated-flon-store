@@ -167,10 +167,10 @@ export function getProductReviewStats(productId: string): {
   
   const ratingDistribution = productReviews.reduce(
     (dist, review) => {
-      dist[review.rating] = (dist[review.rating] || 0) + 1;
+      dist[review.rating as keyof typeof dist] = (dist[review.rating as keyof typeof dist] || 0) + 1;
       return dist;
     },
-    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>
   );
   
   const verifiedCount = productReviews.filter(review => review.is_verified_purchase).length;

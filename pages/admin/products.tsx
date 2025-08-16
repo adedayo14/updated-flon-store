@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { validateAdminSession } from 'lib/auth/adminAuth';
 

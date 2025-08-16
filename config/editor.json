@@ -1239,7 +1239,7 @@
         {
           "id": "lang.account.orders.details.return_dialog_body",
           "label": "Return dialog body",
-          "default": "To initiate a partial or complete return of an order, please contact us so we can start the return process. Don’t forget to include the order number and the reason for returning.",
+          "default": "To initiate a partial or complete return of an order, please contact us at sales@flon.co.uk so we can start the return process. Don’t forget to include the order number and the reason for returning.",
           "type": "long_text",
           "localized": true
         },

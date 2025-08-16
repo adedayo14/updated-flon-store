@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { validateAdminSession } from 'lib/auth/adminAuth';
 
 // This component won't be rendered because we always redirect
